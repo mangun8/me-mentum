@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, BarChart2, Brain, Activity } from 'lucide-react';
+import { BarChart2, Brain, Activity } from 'lucide-react';
 import Button from '../components/Button';
 import { DIAGNOSIS_TOOLS, REVIEWS } from '../constants';
 
@@ -26,12 +26,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link href="/program">
                 <Button size="lg" className="gap-2 font-bold">
-                  코칭 프로세스 <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="/apply">
-                <Button size="lg" variant="outline">
-                  코칭 신청하기
+                  코칭 프로세스 알아보기
                 </Button>
               </Link>
             </div>

@@ -3,6 +3,7 @@
 declare global {
   interface Window {
     dataLayer: Record<string, unknown>[];
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -19,6 +20,10 @@ export function useGTM() {
       user_id: userId,
       method: 'google',
     });
+    // Also fire directly to GA4
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'login', { method: 'google', user_id: userId });
+    }
   };
 
   const trackPageView = (url: string) => {
