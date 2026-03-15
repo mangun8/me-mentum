@@ -4,7 +4,6 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { createClient } from '@/utils/supabase/client';
 import { useGTM } from '@/hooks/useGTM';
 
 function LoginContent() {
@@ -17,28 +16,13 @@ function LoginContent() {
   const next = searchParams?.get('next') ?? '/dashboard';
   const hasError = searchParams?.get('error');
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setIsLoading(true);
-    setError(null);
+    trackLogin('pending_google_oauth');
 
-    const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        // next 파라미터를 콜백 URL에 포함 → 로그인 후 원래 페이지로 복귀
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-      },
-    });
-
-    if (error) {
-      setError('로그인에 실패했습니다. 다시 시도해 주세요.');
-      setIsLoading(false);
-      return;
-    }
-
-    if (data) {
-      trackLogin('pending_google_oauth');
-    }
+    // Supabase URL 대신 우리 도메인의 API 라우트로 이동
+    // 서버에서 OAuth URL을 받아 Google로 리다이렉트
+    window.location.href = `/api/auth/google?next=${encodeURIComponent(next)}`;
   };
 
   return (
