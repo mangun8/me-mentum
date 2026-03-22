@@ -68,8 +68,18 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}/login?error=auth_failed`);
       }
 
-      // 현재 유저의 metadata에 네이버 정보 추가
       const adminClient = createAdminClient();
+
+      // 네이버 이메일 또는 naver_id로 기존 중복 계정이 있으면 삭제
+      const { data: allUsers } = await adminClient.auth.admin.listUsers();
+      const duplicateUser = allUsers?.users?.find(
+        u => u.id !== user.id && (u.user_metadata?.naver_id === naverId || (email && u.email === email))
+      );
+      if (duplicateUser) {
+        await adminClient.auth.admin.deleteUser(duplicateUser.id);
+      }
+
+      // 현재 유저의 metadata에 네이버 정보 추가
       await adminClient.auth.admin.updateUserById(user.id, {
         user_metadata: {
           ...user.user_metadata,
