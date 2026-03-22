@@ -19,10 +19,19 @@ function LoginContent() {
   const handleGoogleLogin = () => {
     setIsLoading(true);
     trackLogin('pending_google_oauth');
-
-    // Supabase URL 대신 우리 도메인의 API 라우트로 이동
-    // 서버에서 OAuth URL을 받아 Google로 리다이렉트
     window.location.href = `/api/auth/google?next=${encodeURIComponent(next)}`;
+  };
+
+  const handleKakaoLogin = () => {
+    setIsLoading(true);
+    trackLogin('pending_kakao_oauth', 'kakao');
+    window.location.href = `/api/auth/kakao?next=${encodeURIComponent(next)}`;
+  };
+
+  const handleNaverLogin = () => {
+    setIsLoading(true);
+    trackLogin('pending_naver_oauth', 'naver');
+    window.location.href = `/api/auth/naver?next=${encodeURIComponent(next)}`;
   };
 
   return (
@@ -65,6 +74,32 @@ function LoginContent() {
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
             {isLoading ? '로그인 중...' : 'Google로 계속하기'}
+          </button>
+
+          {/* Kakao Login Button */}
+          <button
+            onClick={handleKakaoLogin}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm mt-3"
+            style={{ backgroundColor: '#FEE500', color: '#191919' }}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3C6.48 3 2 6.36 2 10.44c0 2.62 1.75 4.93 4.38 6.24-.19.7-.69 2.54-.79 2.94-.12.49.18.48.38.35.16-.1 2.5-1.7 3.52-2.39.49.07.99.1 1.51.1 5.52 0 10-3.36 10-7.24C22 6.36 17.52 3 12 3z" fill="#191919" />
+            </svg>
+            {isLoading ? '로그인 중...' : '카카오로 계속하기'}
+          </button>
+
+          {/* Naver Login Button */}
+          <button
+            onClick={handleNaverLogin}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 rounded-xl font-medium text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm mt-3"
+            style={{ backgroundColor: '#03C75A' }}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M16.273 12.845 7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727v12.845z" fill="#fff" />
+            </svg>
+            {isLoading ? '로그인 중...' : '네이버로 계속하기'}
           </button>
 
           <div className="mt-6 text-center">

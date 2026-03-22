@@ -14,15 +14,15 @@ export function useGTM() {
     window.dataLayer.push(event);
   };
 
-  const trackLogin = (userId: string) => {
+  const trackLogin = (userId: string, method: string = 'google') => {
     push({
       event: 'login',
       user_id: userId,
-      method: 'google',
+      method,
     });
     // Also fire directly to GA4
     if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', 'login', { method: 'google', user_id: userId });
+      window.gtag('event', 'login', { method, user_id: userId });
     }
   };
 
