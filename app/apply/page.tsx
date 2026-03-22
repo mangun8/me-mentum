@@ -6,7 +6,7 @@ import { Check, ChevronRight, CreditCard, User } from 'lucide-react';
 import Button from '../../components/Button';
 import { PROGRAMS } from '../../constants';
 import { ApplyStep } from '../../types';
-import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import { loadPaymentWidget, ANONYMOUS, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
 
@@ -38,25 +38,23 @@ function ApplyContent() {
     const program = PROGRAMS[selectedTrack];
     if (!program || program.priceValue <= 0) return;
 
-    const customerKey = `customer_${Date.now()}`;
+    loadPaymentWidget(CLIENT_KEY, ANONYMOUS)
+      .then(async (widget) => {
+        setPaymentWidget(widget);
 
-    loadPaymentWidget(CLIENT_KEY, customerKey).then(widget => {
-      setPaymentWidget(widget);
-
-      if (paymentMethodsRef.current) {
-        widget.renderPaymentMethods(
+        await widget.renderPaymentMethods(
           '#payment-methods',
           { value: program.priceValue },
           { variantKey: 'DEFAULT' }
         );
-      }
 
-      if (agreementRef.current) {
-        widget.renderAgreement('#agreement', { variantKey: 'AGREEMENT' });
-      }
+        await widget.renderAgreement('#agreement', { variantKey: 'AGREEMENT' });
 
-      setIsPaymentReady(true);
-    });
+        setIsPaymentReady(true);
+      })
+      .catch((err) => {
+        console.error('결제 위젯 로드 실패:', err);
+      });
   }, [step, selectedTrack]);
 
   const nextStep = () => {
