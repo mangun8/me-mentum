@@ -44,7 +44,6 @@ export interface Review {
 
 export enum ApplyStep {
   TRACK_SELECTION = 1,
-  SCHEDULE = 2,
-  PAYMENT = 3,
-  COMPLETE = 4
+  PAYMENT = 2,
+  COMPLETE = 3
 }
