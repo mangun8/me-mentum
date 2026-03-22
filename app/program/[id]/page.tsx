@@ -52,8 +52,8 @@ export default function Program() {
           <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
             <div className="max-w-3xl">
               <div className="flex gap-2 mb-6">
-                <Badge variant="default" className="bg-white text-primary font-bold border-none hover:bg-white/90">Track</Badge>
-                <Badge variant="outline" className="text-white border-white bg-white/10 hover:bg-white/20">For {program.target}</Badge>
+                <Badge variant="default" className="bg-primary text-white font-bold border-none hover:bg-primary-hover">Track</Badge>
+                <Badge variant="outline" className="text-white border-white/30 bg-white/10 hover:bg-white/20">For {program.target}</Badge>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight leading-tight">{program.title}</h1>
               <p className="text-xl text-gray-300 leading-relaxed mb-8 max-w-2xl">{program.description}</p>
