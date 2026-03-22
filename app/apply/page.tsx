@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Check, ChevronRight, Calendar, CreditCard, User } from 'lucide-react';
 import Button from '../../components/Button';
 import { PROGRAMS } from '../../constants';
 import { ApplyStep } from '../../types';
+import { loadPaymentWidget, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+
+const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
 
 function ApplyContent() {
   const searchParams = useSearchParams();
@@ -15,8 +18,12 @@ function ApplyContent() {
   const [step, setStep] = useState<ApplyStep>(ApplyStep.TRACK_SELECTION);
   const [selectedTrack, setSelectedTrack] = useState<string>(initialTrackId || 'junior');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
+  const [isPaymentReady, setIsPaymentReady] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const paymentMethodsRef = useRef<HTMLDivElement>(null);
+  const agreementRef = useRef<HTMLDivElement>(null);
 
-  // Auto-select track if provided in URL
   useEffect(() => {
     if (initialTrackId) {
       const match = Object.values(PROGRAMS).find(p => p.id === initialTrackId);
@@ -26,6 +33,34 @@ function ApplyContent() {
     }
   }, [initialTrackId]);
 
+  // 결제 위젯 초기화
+  useEffect(() => {
+    if (step !== ApplyStep.PAYMENT) return;
+
+    const program = PROGRAMS[selectedTrack];
+    if (!program || program.priceValue <= 0) return;
+
+    const customerKey = `customer_${Date.now()}`;
+
+    loadPaymentWidget(CLIENT_KEY, customerKey).then(widget => {
+      setPaymentWidget(widget);
+
+      if (paymentMethodsRef.current) {
+        widget.renderPaymentMethods(
+          '#payment-methods',
+          { value: program.priceValue },
+          { variantKey: 'DEFAULT' }
+        );
+      }
+
+      if (agreementRef.current) {
+        widget.renderAgreement('#agreement', { variantKey: 'AGREEMENT' });
+      }
+
+      setIsPaymentReady(true);
+    });
+  }, [step, selectedTrack]);
+
   const nextStep = () => {
     setStep(prev => prev + 1);
     window.scrollTo(0, 0);
@@ -33,6 +68,27 @@ function ApplyContent() {
 
   const prevStep = () => {
     setStep(prev => prev - 1);
+    setIsPaymentReady(false);
+    setPaymentWidget(null);
+  };
+
+  const handlePayment = async () => {
+    if (!paymentWidget || isProcessing) return;
+    setIsProcessing(true);
+
+    const program = PROGRAMS[selectedTrack];
+    const orderId = `mementum_${selectedTrack}_${Date.now()}`;
+
+    try {
+      await paymentWidget.requestPayment({
+        orderId,
+        orderName: `${program.title} 코칭 패키지`,
+        successUrl: `${window.location.origin}/payment/success`,
+        failUrl: `${window.location.origin}/payment/fail`,
+      });
+    } catch {
+      setIsProcessing(false);
+    }
   };
 
   const renderProgressBar = () => (
@@ -98,7 +154,7 @@ function ApplyContent() {
             </div>
           )}
 
-          {/* Step 2: Schedule (Mock Calendly) */}
+          {/* Step 2: Schedule */}
           {step === ApplyStep.SCHEDULE && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold flex items-center gap-2">
@@ -108,7 +164,6 @@ function ApplyContent() {
               <p className="text-sm text-gray-500">원활한 코칭을 위해 첫 번째 세션(Kick-off) 시간을 예약해주세요.</p>
 
               <div className="border border-gray-200 rounded-xl p-4">
-                {/* Mock Calendar Grid */}
                 <div className="grid grid-cols-7 gap-2 text-center text-sm mb-4">
                   {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
                     <div key={d} className="text-gray-400 font-medium py-2">{d}</div>
@@ -116,7 +171,7 @@ function ApplyContent() {
                   {Array.from({ length: 30 }).map((_, i) => (
                     <button
                       key={i}
-                      disabled={i < 5} // Disable past dates
+                      disabled={i < 5}
                       onClick={() => setSelectedDate(`2024-06-${i + 1}`)}
                       className={`py-2 rounded-lg hover:bg-blue-50 focus:outline-none transition-colors ${
                         i < 5 ? 'text-gray-300 cursor-not-allowed' : 'text-dark font-medium'
@@ -150,22 +205,23 @@ function ApplyContent() {
             </div>
           )}
 
-          {/* Step 3: Payment */}
+          {/* Step 3: Payment (TossPayments Widget) */}
           {step === ApplyStep.PAYMENT && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-primary" />
-                3. 결제 정보
+                3. 결제
               </h2>
 
-              <div className="bg-gray-50 p-4 rounded-xl space-y-2 mb-6">
+              {/* 주문 요약 */}
+              <div className="bg-gray-50 p-4 rounded-xl space-y-2">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>선택한 트랙</span>
                   <span className="font-medium text-dark">{PROGRAMS[selectedTrack]?.title}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>예약 일정</span>
-                  <span className="font-medium text-dark">{selectedDate} 14:00</span>
+                  <span className="font-medium text-dark">{selectedDate}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
                   <span>총 결제금액</span>
@@ -173,42 +229,38 @@ function ApplyContent() {
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">이름</label>
-                  <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="홍길동" />
+              {/* Founder Track은 문의 */}
+              {PROGRAMS[selectedTrack]?.priceValue <= 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-secondary mb-4">Founder Track은 맞춤형 프로그램입니다.</p>
+                  <a
+                    href="mailto:support@mementum.lab"
+                    className="px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors inline-block"
+                  >
+                    상담 문의하기
+                  </a>
                 </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">카드 번호</label>
-                  <div className="flex gap-2">
-                    <input type="text" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none" placeholder="0000-0000-0000-0000" />
+              ) : (
+                <>
+                  {/* 토스페이먼츠 결제 수단 위젯 */}
+                  <div id="payment-methods" ref={paymentMethodsRef} />
+
+                  {/* 토스페이먼츠 약관 동의 위젯 */}
+                  <div id="agreement" ref={agreementRef} />
+
+                  <div className="flex justify-between pt-4">
+                    <Button variant="ghost" onClick={prevStep}>이전</Button>
+                    <Button
+                      onClick={handlePayment}
+                      disabled={!isPaymentReady || isProcessing}
+                      size="lg"
+                      className="bg-dark hover:bg-slate-800"
+                    >
+                      {isProcessing ? '처리 중...' : '결제하기'}
+                    </Button>
                   </div>
-                </div>
-              </div>
-
-              <div className="flex justify-between pt-6">
-                <Button variant="ghost" onClick={prevStep}>이전</Button>
-                <Button onClick={nextStep} size="lg" className="bg-dark hover:bg-slate-800">
-                  결제하기
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 4: Complete */}
-          {step === ApplyStep.COMPLETE && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-10 h-10 text-green-600" />
-              </div>
-              <h2 className="text-3xl font-bold text-dark mb-4">신청이 완료되었습니다!</h2>
-              <p className="text-secondary mb-8">
-                코칭 신청 확인 메일이 발송되었습니다.<br />
-                예약하신 시간에 뵙겠습니다.
-              </p>
-              <Link href="/">
-                <Button>메인으로 돌아가기</Button>
-              </Link>
+                </>
+              )}
             </div>
           )}
         </div>
