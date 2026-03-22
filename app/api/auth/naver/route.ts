@@ -4,20 +4,28 @@ import { cookies } from 'next/headers';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const next = searchParams.get('next') ?? '/dashboard';
+  const mode = searchParams.get('mode') ?? 'login'; // 'login' or 'link'
 
   // CSRF 방지용 state 생성
   const state = crypto.randomUUID();
 
-  // state와 next를 쿠키에 저장 (callback에서 검증)
+  // state, next, mode를 쿠키에 저장 (callback에서 사용)
   const cookieStore = cookies();
   cookieStore.set('naver_oauth_state', state, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 600, // 10분
+    maxAge: 600,
     path: '/',
   });
   cookieStore.set('naver_oauth_next', next, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 600,
+    path: '/',
+  });
+  cookieStore.set('naver_oauth_mode', mode, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
