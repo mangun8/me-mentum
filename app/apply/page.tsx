@@ -49,11 +49,10 @@ function ApplyContent() {
 
         await widget.renderPaymentMethods(
           '#payment-methods',
-          { value: program.priceValue },
-          { variantKey: 'DEFAULT' }
+          { value: program.priceValue }
         );
 
-        await widget.renderAgreement('#agreement', { variantKey: 'AGREEMENT' });
+        await widget.renderAgreement('#agreement');
 
         setIsPaymentReady(true);
       })
