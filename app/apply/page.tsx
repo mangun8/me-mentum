@@ -10,6 +10,11 @@ import { loadPaymentWidget, ANONYMOUS, PaymentWidgetInstance } from '@tosspaymen
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
 
+// selectedTrack(id)으로 프로그램을 찾는 헬퍼
+function getProgram(trackId: string) {
+  return Object.values(PROGRAMS).find(p => p.id === trackId);
+}
+
 function ApplyContent() {
   const searchParams = useSearchParams();
   const initialTrackId = searchParams?.get('track') ?? null;
@@ -35,7 +40,7 @@ function ApplyContent() {
   useEffect(() => {
     if (step !== ApplyStep.PAYMENT) return;
 
-    const program = PROGRAMS[selectedTrack];
+    const program = getProgram(selectedTrack);
     if (!program || program.priceValue <= 0) return;
 
     loadPaymentWidget(CLIENT_KEY, ANONYMOUS)
@@ -69,10 +74,10 @@ function ApplyContent() {
   };
 
   const handlePayment = async () => {
-    if (!paymentWidget || isProcessing) return;
+    const program = getProgram(selectedTrack);
+    if (!paymentWidget || !program || isProcessing) return;
     setIsProcessing(true);
 
-    const program = PROGRAMS[selectedTrack];
     const orderId = `mementum_${selectedTrack}_${Date.now()}`;
 
     try {
@@ -162,16 +167,16 @@ function ApplyContent() {
               <div className="bg-gray-50 p-4 rounded-xl space-y-2">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>선택한 트랙</span>
-                  <span className="font-medium text-dark">{PROGRAMS[selectedTrack]?.title}</span>
+                  <span className="font-medium text-dark">{getProgram(selectedTrack)?.title}</span>
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t border-gray-200 pt-2 mt-2">
                   <span>총 결제금액</span>
-                  <span className="text-primary">{PROGRAMS[selectedTrack]?.price}</span>
+                  <span className="text-primary">{getProgram(selectedTrack)?.price}</span>
                 </div>
               </div>
 
               {/* Founder Track은 문의 */}
-              {PROGRAMS[selectedTrack]?.priceValue <= 0 ? (
+              {(getProgram(selectedTrack)?.priceValue ?? 0) <= 0 ? (
                 <div className="text-center py-8">
                   <p className="text-secondary mb-4">Founder Track은 맞춤형 프로그램입니다.</p>
                   <a
