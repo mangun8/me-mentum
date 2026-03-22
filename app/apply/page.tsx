@@ -47,12 +47,14 @@ function ApplyContent() {
       .then(async (widget) => {
         setPaymentWidget(widget);
 
-        await widget.renderPaymentMethods(
+        const paymentMethods = await widget.renderPaymentMethods(
           '#payment-methods',
           { value: program.priceValue }
         );
+        console.log('결제 수단 위젯 렌더링 완료:', paymentMethods);
 
-        await widget.renderAgreement('#agreement');
+        const agreement = await widget.renderAgreement('#agreement');
+        console.log('약관 동의 위젯 렌더링 완료:', agreement);
 
         setIsPaymentReady(true);
       })
@@ -86,7 +88,8 @@ function ApplyContent() {
         successUrl: `${window.location.origin}/payment/success`,
         failUrl: `${window.location.origin}/payment/fail`,
       });
-    } catch {
+    } catch (err) {
+      console.error('결제 요청 실패:', err);
       setIsProcessing(false);
     }
   };
@@ -188,7 +191,7 @@ function ApplyContent() {
               ) : (
                 <>
                   {/* 토스페이먼츠 결제 수단 위젯 */}
-                  <div id="payment-methods" ref={paymentMethodsRef} />
+                  <div id="payment-methods" ref={paymentMethodsRef} style={{ minHeight: '200px' }} />
 
                   {/* 토스페이먼츠 약관 동의 위젯 */}
                   <div id="agreement" ref={agreementRef} />
