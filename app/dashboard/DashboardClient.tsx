@@ -198,9 +198,9 @@ export default function DashboardClient({ user, isAdmin }: Props) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-1 space-y-6">
 
         {/* User Info Card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
@@ -369,7 +369,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
         </div>{/* End Left Column */}
 
         {/* Right Column */}
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
 
           {/* 수강권 현황 */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
