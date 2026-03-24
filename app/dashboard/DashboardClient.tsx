@@ -305,7 +305,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
         {/* 계정 연동 */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <h2 className="font-bold text-dark mb-4">계정 연동</h2>
-          <p className="text-sm text-secondary mb-4">다른 소셜 계정을 연동하면 어떤 계정으로든 로그인할 수 있습니다.</p>
+          <p className="text-sm text-secondary mb-4 break-keep">다른 소셜 계정을 연동하면 어떤 계정으로든 로그인할 수 있습니다.</p>
           <div className="space-y-3">
             {/* Google */}
             <div className="flex items-center justify-between py-2">
