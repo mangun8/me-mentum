@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useGTM } from '@/hooks/useGTM';
+import Cal, { getCalApi } from '@calcom/embed-react';
 import type { User } from '@supabase/supabase-js';
 
 interface Props {
@@ -298,15 +299,19 @@ export default function DashboardClient({ user, isAdmin }: Props) {
           </div>
         </div>
 
-        {/* Coming Soon */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center max-w-md">
-          <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🚀</span>
-          </div>
-          <h3 className="text-xl font-bold text-dark mb-2">대시보드 준비 중</h3>
-          <p className="text-secondary text-sm">
-            코칭 신청 현황, 세션 일정 등의 기능이 곧 추가됩니다.
-          </p>
+        {/* 코칭 세션 예약 */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <h2 className="font-bold text-dark mb-4">코칭 세션 예약</h2>
+          <p className="text-sm text-secondary mb-6">원하는 날짜와 시간을 선택하여 1:1 코칭 세션을 예약하세요.</p>
+          <Cal
+            calLink="me-mentum/coaching"
+            style={{ width: '100%', height: '100%', overflow: 'scroll' }}
+            config={{
+              name: user.user_metadata?.full_name ?? '',
+              email: user.email ?? '',
+              theme: 'light',
+            }}
+          />
         </div>
       </div>
     </div>
