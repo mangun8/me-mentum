@@ -5,7 +5,16 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useGTM } from '@/hooks/useGTM';
 import Cal, { getCalApi } from '@calcom/embed-react';
+import { Calendar, Ticket, Clock, Video } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
+
+interface Booking {
+  id: string;
+  scheduled_at: string;
+  status: string;
+  programs: { title: string; track: string } | null;
+  coaches: { name: string } | null;
+}
 
 interface Props {
   user: User;
@@ -24,6 +33,10 @@ export default function DashboardClient({ user, isAdmin }: Props) {
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [remainingTickets, setRemainingTickets] = useState(0);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loadingData, setLoadingData] = useState(true);
+
   useEffect(() => {
     trackLogin(user.id);
 
@@ -31,9 +44,59 @@ export default function DashboardClient({ user, isAdmin }: Props) {
       console.log('%c[Me-mentum] Admin 권한 확인됨', 'color: #2563eb; font-weight: bold;');
       console.log({ role: 'admin', email: user.email, id: user.id });
     }
+
+    // 수강권 및 예약 데이터 로드
+    async function loadDashboardData() {
+      const [userRes, bookingsRes] = await Promise.all([
+        supabase
+          .from('users')
+          .select('remaining_tickets')
+          .eq('id', user.id)
+          .single(),
+        supabase
+          .from('bookings')
+          .select('id, scheduled_at, status, programs(title, track), coaches(name)')
+          .eq('user_id', user.id)
+          .gte('scheduled_at', new Date().toISOString())
+          .order('scheduled_at', { ascending: true })
+          .limit(10),
+      ]);
+
+      if (userRes.data) {
+        setRemainingTickets(userRes.data.remaining_tickets);
+      }
+      if (bookingsRes.data) {
+        setBookings(bookingsRes.data as unknown as Booking[]);
+      }
+      setLoadingData(false);
+    }
+
+    loadDashboardData();
   }, []);
 
   const [linking, setLinking] = useState<string | null>(null);
+
+  const nextBooking = bookings.find(b => b.status === 'confirmed' || b.status === 'pending');
+
+  const formatDate = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric', weekday: 'short' });
+  };
+
+  const formatTime = (dateStr: string) => {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const statusLabel = (status: string) => {
+    switch (status) {
+      case 'confirmed': return { text: '확정', color: 'bg-green-50 text-green-700' };
+      case 'pending': return { text: '대기', color: 'bg-yellow-50 text-yellow-700' };
+      case 'cancelled': return { text: '취소', color: 'bg-red-50 text-red-700' };
+      case 'completed': return { text: '완료', color: 'bg-gray-100 text-gray-500' };
+      default: return { text: status, color: 'bg-gray-100 text-gray-500' };
+    }
+  };
 
   // 연동된 프로바이더 확인: identities (빌트인) + metadata (커스텀 연동)
   const identityProviders = user.identities?.map(i => i.provider) ?? [];
@@ -135,8 +198,12 @@ export default function DashboardClient({ user, isAdmin }: Props) {
           </p>
         </div>
 
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Left Column */}
+        <div className="space-y-6">
+
         {/* User Info Card */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 max-w-md">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="font-bold text-dark">내 프로필</h2>
             {!isEditing && (
@@ -236,7 +303,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
         </div>
 
         {/* 계정 연동 */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6 max-w-md">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <h2 className="font-bold text-dark mb-4">계정 연동</h2>
           <p className="text-sm text-secondary mb-4">다른 소셜 계정을 연동하면 어떤 계정으로든 로그인할 수 있습니다.</p>
           <div className="space-y-3">
@@ -298,6 +365,121 @@ export default function DashboardClient({ user, isAdmin }: Props) {
             </div>
           </div>
         </div>
+
+        </div>{/* End Left Column */}
+
+        {/* Right Column */}
+        <div className="space-y-6">
+
+          {/* 수강권 현황 */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-bold text-dark mb-4 flex items-center gap-2">
+              <Ticket className="w-5 h-5 text-primary" />
+              수강권 현황
+            </h2>
+            {loadingData ? (
+              <div className="animate-pulse h-16 bg-gray-100 rounded-xl" />
+            ) : (
+              <div className="flex items-center justify-between bg-blue-50 rounded-xl p-4">
+                <div>
+                  <p className="text-sm text-secondary">잔여 코칭 세션</p>
+                  <p className="text-3xl font-bold text-primary mt-1">{remainingTickets}<span className="text-base font-medium text-secondary ml-1">회</span></p>
+                </div>
+                {remainingTickets === 0 && (
+                  <a
+                    href="/apply"
+                    className="px-4 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary-hover transition-colors"
+                  >
+                    수강권 구매
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 다가오는 코칭 배너 */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-bold text-dark mb-4 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-primary" />
+              다가오는 코칭
+            </h2>
+            {loadingData ? (
+              <div className="animate-pulse h-20 bg-gray-100 rounded-xl" />
+            ) : nextBooking ? (
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-sm text-secondary mb-1">{nextBooking.programs?.title ?? '코칭 세션'}</p>
+                    <p className="text-lg font-bold text-dark">
+                      {formatDate(nextBooking.scheduled_at)}
+                    </p>
+                    <p className="text-primary font-medium">{formatTime(nextBooking.scheduled_at)}</p>
+                    {nextBooking.coaches?.name && (
+                      <p className="text-sm text-secondary mt-2">코치: {nextBooking.coaches.name}</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${statusLabel(nextBooking.status).color}`}>
+                      {statusLabel(nextBooking.status).text}
+                    </span>
+                    <Video className="w-5 h-5 text-secondary" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-6 text-secondary text-sm">
+                <Calendar className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                예정된 코칭 세션이 없습니다.<br />
+                아래에서 새 세션을 예약해보세요.
+              </div>
+            )}
+          </div>
+
+          {/* 예약된 일정 목록 */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-bold text-dark mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              예약된 일정
+            </h2>
+            {loadingData ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className="animate-pulse h-14 bg-gray-100 rounded-xl" />
+                ))}
+              </div>
+            ) : bookings.length > 0 ? (
+              <div className="space-y-3">
+                {bookings.map((booking) => {
+                  const st = statusLabel(booking.status);
+                  return (
+                    <div key={booking.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center shrink-0">
+                          <span className="text-sm font-bold text-primary">
+                            {new Date(booking.scheduled_at).getDate()}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-dark">{formatDate(booking.scheduled_at)}</p>
+                          <p className="text-xs text-secondary">{formatTime(booking.scheduled_at)} · {booking.programs?.title ?? '코칭 세션'}</p>
+                        </div>
+                      </div>
+                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${st.color}`}>
+                        {st.text}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-secondary text-sm">
+                예약된 일정이 없습니다.
+              </div>
+            )}
+          </div>
+
+        </div>{/* End Right Column */}
+        </div>{/* End Grid */}
 
         {/* 코칭 세션 예약 */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
