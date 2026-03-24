@@ -484,16 +484,32 @@ export default function DashboardClient({ user, isAdmin }: Props) {
         {/* 코칭 세션 예약 */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
           <h2 className="font-bold text-dark mb-4">코칭 세션 예약</h2>
-          <p className="text-sm text-secondary mb-6">원하는 날짜와 시간을 선택하여 1:1 코칭 세션을 예약하세요.</p>
-          <Cal
-            calLink="me-mentum/coaching"
-            style={{ width: '100%', height: '100%', overflow: 'scroll' }}
-            config={{
-              name: user.user_metadata?.full_name ?? '',
-              email: user.email ?? '',
-              theme: 'light',
-            }}
-          />
+          {!loadingData && remainingTickets <= 0 ? (
+            <div className="text-center py-12">
+              <Ticket className="w-10 h-10 mx-auto mb-3 text-gray-300" />
+              <p className="text-secondary mb-2">잔여 수강권이 없습니다.</p>
+              <p className="text-sm text-gray-400 mb-6">수강권을 구매하시면 코칭 세션을 예약할 수 있습니다.</p>
+              <a
+                href="/apply"
+                className="px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors inline-block"
+              >
+                수강권 구매하기
+              </a>
+            </div>
+          ) : (
+            <>
+              <p className="text-sm text-secondary mb-6">원하는 날짜와 시간을 선택하여 1:1 코칭 세션을 예약하세요.</p>
+              <Cal
+                calLink="me-mentum/coaching"
+                style={{ width: '100%', height: '100%', overflow: 'scroll' }}
+                config={{
+                  name: user.user_metadata?.full_name ?? '',
+                  email: user.email ?? '',
+                  theme: 'light',
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
     </div>
