@@ -86,11 +86,11 @@ function SuccessContent() {
         <h2 className="text-3xl font-bold text-dark mb-4">결제가 완료되었습니다!</h2>
         <p className="text-secondary mb-8">
           코칭 세션 예약 안내가 곧 발송됩니다.<br />
-          대시보드에서 예약 현황을 확인하세요.
+          My Page에서 예약 현황을 확인하세요.
         </p>
         <Link href="/dashboard">
           <button className="px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors">
-            대시보드로 이동
+            My Page로 이동
           </button>
         </Link>
       </div>

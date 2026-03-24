@@ -194,7 +194,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
             님 👋
           </h1>
           <p className="text-secondary mt-2">
-            Me-mentum 대시보드에 오신 것을 환영합니다.
+            My Page에 오신 것을 환영합니다.
           </p>
         </div>
 

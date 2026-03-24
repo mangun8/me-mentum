@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, ChevronDown, LogIn, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ChevronDown, LogIn, LogOut, UserCircle } from 'lucide-react';
 import { NAV_LINKS, PROGRAMS } from '../constants';
 import Button from './Button';
 import { createClient } from '@/utils/supabase/client';
@@ -113,8 +113,8 @@ const Navbar: React.FC = () => {
                   href="/dashboard"
                   className="flex items-center gap-1.5 text-sm font-medium text-secondary hover:text-primary transition-colors"
                 >
-                  <LayoutDashboard className="w-4 h-4" />
-                  대시보드
+                  <UserCircle className="w-4 h-4" />
+                  My Page
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -197,8 +197,8 @@ const Navbar: React.FC = () => {
                 <>
                   <Link href="/dashboard" onClick={() => setIsOpen(false)}>
                     <button className="w-full flex items-center gap-2 px-3 py-2 text-base font-medium text-secondary hover:text-primary hover:bg-gray-50 rounded-md">
-                      <LayoutDashboard className="w-4 h-4" />
-                      대시보드
+                      <UserCircle className="w-4 h-4" />
+                      My Page
                     </button>
                   </Link>
                   <button
