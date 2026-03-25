@@ -188,12 +188,22 @@ export default function DashboardClient({ user, isAdmin }: Props) {
               </span>
             )}
           </div>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-secondary hover:text-dark transition-colors"
-          >
-            로그아웃
-          </button>
+          <div className="flex items-center gap-4">
+            {isAdmin && (
+              <a
+                href="/admin/sessions"
+                className="text-sm font-medium text-primary hover:underline"
+              >
+                세션 관리
+              </a>
+            )}
+            <button
+              onClick={handleLogout}
+              className="text-sm text-secondary hover:text-dark transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
         </div>
       </div>
 
