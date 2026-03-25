@@ -5,13 +5,15 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { useGTM } from '@/hooks/useGTM';
 import Cal, { getCalApi } from '@calcom/embed-react';
-import { Calendar, Ticket, Clock, Video } from 'lucide-react';
+import { Calendar, Ticket, Clock, Video, FileText, Loader2, ExternalLink } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 
 interface Booking {
   id: string;
   scheduled_at: string;
   status: string;
+  summary_status: string;
+  google_doc_url: string | null;
   programs: { title: string; track: string } | null;
   coaches: { name: string } | null;
 }
@@ -35,6 +37,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
 
   const [remainingTickets, setRemainingTickets] = useState(0);
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [pastBookings, setPastBookings] = useState<Booking[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export default function DashboardClient({ user, isAdmin }: Props) {
 
     // 수강권 및 예약 데이터 로드
     async function loadDashboardData() {
-      const [userRes, bookingsRes] = await Promise.all([
+      const [userRes, bookingsRes, pastBookingsRes] = await Promise.all([
         supabase
           .from('users')
           .select('remaining_tickets')
@@ -55,10 +58,18 @@ export default function DashboardClient({ user, isAdmin }: Props) {
           .single(),
         supabase
           .from('bookings')
-          .select('id, scheduled_at, status, programs(title, track), coaches(name)')
+          .select('id, scheduled_at, status, summary_status, google_doc_url, programs(title, track), coaches(name)')
           .eq('user_id', user.id)
           .gte('scheduled_at', new Date().toISOString())
+          .in('status', ['confirmed', 'pending'])
           .order('scheduled_at', { ascending: true })
+          .limit(10),
+        supabase
+          .from('bookings')
+          .select('id, scheduled_at, status, summary_status, google_doc_url, programs(title, track), coaches(name)')
+          .eq('user_id', user.id)
+          .lt('scheduled_at', new Date().toISOString())
+          .order('scheduled_at', { ascending: false })
           .limit(10),
       ]);
 
@@ -67,6 +78,9 @@ export default function DashboardClient({ user, isAdmin }: Props) {
       }
       if (bookingsRes.data) {
         setBookings(bookingsRes.data as unknown as Booking[]);
+      }
+      if (pastBookingsRes.data) {
+        setPastBookings(pastBookingsRes.data as unknown as Booking[]);
       }
       setLoadingData(false);
     }
@@ -474,6 +488,79 @@ export default function DashboardClient({ user, isAdmin }: Props) {
             ) : (
               <div className="text-center py-6 text-secondary text-sm">
                 예약된 일정이 없습니다.
+              </div>
+            )}
+          </div>
+
+          {/* 지난 세션 기록 */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <h2 className="font-bold text-dark mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              지난 세션 기록
+            </h2>
+            {loadingData ? (
+              <div className="space-y-3">
+                {[1, 2].map(i => (
+                  <div key={i} className="animate-pulse h-16 bg-gray-100 rounded-xl" />
+                ))}
+              </div>
+            ) : pastBookings.length > 0 ? (
+              <div className="space-y-3">
+                {pastBookings.map((booking) => {
+                  const summaryBadge = () => {
+                    switch (booking.summary_status) {
+                      case 'completed':
+                        return { text: '요약 완료', color: 'bg-green-50 text-green-700', icon: <FileText className="w-3.5 h-3.5" /> };
+                      case 'processing':
+                      case 'transcribing':
+                      case 'summarizing':
+                        return { text: '분석 중', color: 'bg-blue-50 text-blue-700', icon: <Loader2 className="w-3.5 h-3.5 animate-spin" /> };
+                      case 'failed':
+                        return { text: '분석 실패', color: 'bg-red-50 text-red-700', icon: null };
+                      default:
+                        return { text: '대기', color: 'bg-gray-100 text-gray-500', icon: null };
+                    }
+                  };
+
+                  const badge = summaryBadge();
+
+                  return (
+                    <div key={booking.id} className="p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                            <span className="text-sm font-bold text-secondary">
+                              {new Date(booking.scheduled_at).getDate()}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-dark">{formatDate(booking.scheduled_at)}</p>
+                            <p className="text-xs text-secondary">{formatTime(booking.scheduled_at)} · {booking.programs?.title ?? '코칭 세션'}</p>
+                          </div>
+                        </div>
+                        <span className={`text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1 ${badge.color}`}>
+                          {badge.icon}
+                          {badge.text}
+                        </span>
+                      </div>
+                      {booking.google_doc_url && (
+                        <a
+                          href={booking.google_doc_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary font-medium hover:underline"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          세션 요약 보기
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-secondary text-sm">
+                아직 완료된 세션이 없습니다.
               </div>
             )}
           </div>
