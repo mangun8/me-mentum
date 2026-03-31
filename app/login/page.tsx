@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { useGTM } from '@/hooks/useGTM';
 
 function LoginContent() {
@@ -105,9 +106,9 @@ function LoginContent() {
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-400 leading-relaxed">
               로그인하면 Me-mentum의{' '}
-              <a href="#" className="text-primary hover:underline">서비스 이용약관</a>
+              <Link href="/terms" className="text-primary hover:underline">서비스 이용약관</Link>
               {' '}및{' '}
-              <a href="#" className="text-primary hover:underline">개인정보처리방침</a>
+              <Link href="/privacy" className="text-primary hover:underline">개인정보처리방침</Link>
               에 동의하는 것으로 간주합니다.
             </p>
           </div>

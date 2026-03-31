@@ -38,20 +38,27 @@ const Footer: React.FC = () => {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4 text-gray-200">Contact</h4>
+            <h4 className="font-semibold mb-4 text-gray-200">Legal</h4>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li>support@mementum.lab</li>
-              <li>02-123-4567</li>
-              <li>서울시 강남구 테헤란로 427, 10F</li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">개인정보처리방침</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">서비스 이용약관</Link></li>
+              <li><Link href="/refund-policy" className="hover:text-white transition-colors">환불정책</Link></li>
             </ul>
           </div>
         </div>
 
+        {/* 사업자정보 */}
+        <div className="border-t border-gray-800 pt-6 mb-6 text-xs text-gray-500 leading-relaxed space-y-1">
+          <p>상호명: 미멘텀 | 대표자: 정용훈 | 사업자등록번호: 749-23-029900</p>
+          <p>주소: 서울특별시 마포구 월드컵북로 235, 25동 1303호(성산동, 성산시영아파트)</p>
+          <p>이메일: admin@mementum.me</p>
+        </div>
+
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>© 2024 Me-mentum Coaching Lab. All rights reserved.</p>
+          <p>© 2025 Me-mentum Coaching Lab. All rights reserved.</p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Terms of Service</a>
+            <Link href="/privacy" className="hover:text-white">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white">Terms of Service</Link>
           </div>
         </div>
       </div>
