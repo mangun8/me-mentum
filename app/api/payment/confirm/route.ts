@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   const secretKey = process.env.TOSS_SECRET_KEY!;
   const encodedKey = Buffer.from(`${secretKey}:`).toString('base64');
 
-  const tossRes = await fetch('https://api.tosspayments.com/v1/payments/confirm', {
+  const tossRes = await fetch('https://api.tosspayments.com/v2/payments/confirm', {
     method: 'POST',
     headers: {
       Authorization: `Basic ${encodedKey}`,

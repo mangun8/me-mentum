@@ -1,16 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useRef, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Check, ChevronRight, CreditCard, User } from 'lucide-react';
 import Button from '../../components/Button';
 import { PROGRAMS } from '../../constants';
 import { ApplyStep } from '../../types';
-import { loadPaymentWidget, ANONYMOUS, PaymentWidgetInstance } from '@tosspayments/payment-widget-sdk';
+import { loadTossPayments, ANONYMOUS } from '@tosspayments/tosspayments-sdk';
 
 const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
 
-// selectedTrack(id)으로 프로그램을 찾는 헬퍼
 function getProgram(trackId: string) {
   return Object.values(PROGRAMS).find(p => p.id === trackId);
 }
@@ -21,11 +20,10 @@ function ApplyContent() {
 
   const [step, setStep] = useState<ApplyStep>(ApplyStep.TRACK_SELECTION);
   const [selectedTrack, setSelectedTrack] = useState<string>(initialTrackId || 'junior');
-  const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [widgets, setWidgets] = useState<any>(null);
   const [isPaymentReady, setIsPaymentReady] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const paymentMethodsRef = useRef<HTMLDivElement>(null);
-  const agreementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (initialTrackId) {
@@ -36,31 +34,28 @@ function ApplyContent() {
     }
   }, [initialTrackId]);
 
-  // 결제 위젯 초기화
+  // v2 결제 위젯 초기화
   useEffect(() => {
     if (step !== ApplyStep.PAYMENT) return;
 
     const program = getProgram(selectedTrack);
     if (!program || program.priceValue <= 0) return;
 
-    loadPaymentWidget(CLIENT_KEY, ANONYMOUS)
-      .then(async (widget) => {
-        setPaymentWidget(widget);
+    (async () => {
+      try {
+        const tossPayments = await loadTossPayments(CLIENT_KEY);
+        const w = tossPayments.widgets({ customerKey: ANONYMOUS });
 
-        const paymentMethods = await widget.renderPaymentMethods(
-          '#payment-methods',
-          { value: program.priceValue }
-        );
-        console.log('결제 수단 위젯 렌더링 완료:', paymentMethods);
+        await w.setAmount({ currency: 'KRW', value: program.priceValue });
+        await w.renderPaymentMethods({ selector: '#payment-methods' });
+        await w.renderAgreement({ selector: '#agreement' });
 
-        const agreement = await widget.renderAgreement('#agreement');
-        console.log('약관 동의 위젯 렌더링 완료:', agreement);
-
+        setWidgets(w);
         setIsPaymentReady(true);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('결제 위젯 로드 실패:', err);
-      });
+      }
+    })();
   }, [step, selectedTrack]);
 
   const nextStep = () => {
@@ -71,18 +66,18 @@ function ApplyContent() {
   const prevStep = () => {
     setStep(prev => prev - 1);
     setIsPaymentReady(false);
-    setPaymentWidget(null);
+    setWidgets(null);
   };
 
   const handlePayment = async () => {
     const program = getProgram(selectedTrack);
-    if (!paymentWidget || !program || isProcessing) return;
+    if (!widgets || !program || isProcessing) return;
     setIsProcessing(true);
 
     const orderId = `mementum_${selectedTrack}_${Date.now()}`;
 
     try {
-      await paymentWidget.requestPayment({
+      await widgets.requestPayment({
         orderId,
         orderName: `${program.title} 코칭 패키지`,
         successUrl: `${window.location.origin}/payment/success`,
@@ -157,7 +152,7 @@ function ApplyContent() {
             </div>
           )}
 
-          {/* Step 2: Payment (TossPayments Widget) */}
+          {/* Step 2: Payment (TossPayments Widget v2) */}
           {step === ApplyStep.PAYMENT && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold flex items-center gap-2">
@@ -191,10 +186,10 @@ function ApplyContent() {
               ) : (
                 <>
                   {/* 토스페이먼츠 결제 수단 위젯 */}
-                  <div id="payment-methods" ref={paymentMethodsRef} style={{ minHeight: '200px' }} />
+                  <div id="payment-methods" style={{ minHeight: '200px' }} />
 
                   {/* 토스페이먼츠 약관 동의 위젯 */}
-                  <div id="agreement" ref={agreementRef} />
+                  <div id="agreement" />
 
                   <div className="flex justify-between pt-4">
                     <Button variant="ghost" onClick={prevStep}>이전</Button>
