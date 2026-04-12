@@ -26,13 +26,9 @@ export default function Insights() {
               href={`/insights/${article.id}`}
               className="group flex flex-col bg-white rounded-xl overflow-hidden border border-gray-100 hover:border-primary/30 hover:shadow-lg transition-all duration-300"
             >
-              {/* Thumbnail */}
-              <div className="aspect-video bg-gray-100 overflow-hidden relative">
-                <img
-                  src={article.thumbnail}
-                  alt={article.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+              {/* Category Header */}
+              <div className="aspect-video bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center relative">
+                <span className="text-6xl font-black text-primary/10">Lv</span>
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-primary uppercase tracking-wide">
                   {article.category}
                 </div>

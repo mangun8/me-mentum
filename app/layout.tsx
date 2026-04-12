@@ -7,6 +7,8 @@ import Footer from '../components/Footer';
 
 const inter = Inter({ subsets: ['latin'] });
 
+const pretendardCdn = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';
+
 export const metadata: Metadata = {
   title: 'Me-mentum Coaching Lab',
   description: '데이터 기반 코칭으로 당신의 잠재력을 깨우세요.',
@@ -23,6 +25,9 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* Pretendard 한글 폰트 */}
+        <link rel="stylesheet" href={pretendardCdn} />
+
         {/* Google Tag Manager */}
         {GTM_ID && (
           <Script

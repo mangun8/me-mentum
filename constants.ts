@@ -23,7 +23,7 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     recommendedFor: [
       '열심히 일하지만 성과가 나지 않아 고민인 분',
       '상사와의 커뮤니케이션이 어려운 분',
-      '나만의 업무 스타일(OS)을 찾고 싶은 분'
+      '나만의 업무 스타일을 찾고 싶은 분'
     ],
     curriculum: [
       { week: 1, title: 'Opener & Diagnosis', description: '업무 성향 및 강점 진단을 통해 나를 움직이는 동기부여 요인을 파악하고, 코칭 목표를 수립합니다.' },
@@ -36,7 +36,7 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     id: 'senior',
     title: 'Senior/Lead Track',
     target: '팀장 및 파트리더',
-    description: '실무자에서 관리자로, 팀의 성과를 이끄는 리더십 OS를 장착합니다.',
+    description: '실무자에서 관리자로, 팀의 성과를 이끄는 나만의 리더십 스타일을 구축합니다.',
     longDescription: '실무 능력만으로는 좋은 리더가 될 수 없습니다. Senior Track은 관리자로서 겪는 딜레마를 해결하고, 팀의 심리적 안전감을 구축하며 성과를 내는 리더십 스킬을 전수합니다.',
     duration: '8주 (주 1회 세션)',
     price: '₩1,200,000',
@@ -232,34 +232,9 @@ export const COACH_CERTIFICATIONS = [
 export const INSIGHTS_ARTICLES = [
   {
     id: 1,
-    category: "Leadership",
-    title: "팀장이 되고 나서야 알게 된 것들: 실무와 매니징의 차이",
-    summary: "실무 잘하는 사람이 꼭 좋은 팀장이 되는 것은 아닙니다. 플레이어에서 코치로 정체성을 전환하는 과정에서 겪는 시행착오와 해결책을 공유합니다.",
-    date: "2024.03.15",
-    thumbnail: "https://picsum.photos/seed/leadership/800/600"
-  },
-  {
-    id: 2,
     category: "Self-Growth",
-    title: "나만의 '일하는 운영체제(OS)' 만드는 법",
-    summary: "남들의 방식을 무작정 따라하기보다, 내 기질과 강점에 맞는 업무 스타일을 구축해야 합니다. 지속 가능한 성장을 위한 나만의 OS 설계 가이드.",
-    date: "2024.03.10",
-    thumbnail: "https://picsum.photos/seed/growth/800/600"
+    title: "일을 잘한다는 것 (Lv 1 ~ 3)",
+    summary: "일을 잘하고 싶을 때, 우리는 정말 많은 것들을 고민하게 됩니다. 하지만 시간은 한정적이고, 모든 것을 배울 수는 없습니다. 일을 잘한다는 것의 본질을 3단계 레벨로 살펴봅니다.",
+    date: "2026.04.12",
   },
-  {
-    id: 3,
-    category: "Communication",
-    title: "상사를 내 편으로 만드는 보고의 기술",
-    summary: "보고는 단순히 정보를 전달하는 것이 아닙니다. 상사의 의도를 파악하고, 원하는 결과를 얻어내는 설득의 과정입니다. 프로 일잘러의 보고 스킬.",
-    date: "2024.03.05",
-    thumbnail: "https://picsum.photos/seed/comm/800/600"
-  },
-  {
-    id: 4,
-    category: "Culture",
-    title: "심리적 안전감: 고성과 조직의 비밀",
-    summary: "구글이 밝혀낸 고성과 팀의 유일한 공통점, '심리적 안전감'. 실패를 두려워하지 않고 솔직하게 의견을 낼 수 있는 문화를 만드는 방법.",
-    date: "2024.02.28",
-    thumbnail: "https://picsum.photos/seed/culture/800/600"
-  }
 ];
