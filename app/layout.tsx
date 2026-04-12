@@ -12,6 +12,10 @@ const pretendardCdn = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9
 export const metadata: Metadata = {
   title: 'Me-mentum Coaching Lab',
   description: '데이터 기반 코칭으로 당신의 잠재력을 깨우세요.',
+  icons: {
+    icon: '/logo.svg',
+    apple: '/logo.svg',
+  },
 };
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;

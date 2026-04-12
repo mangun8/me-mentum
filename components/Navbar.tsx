@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ChevronDown, LogIn, LogOut, UserCircle } from 'lucide-react';
 import { NAV_LINKS, PROGRAMS } from '../constants';
@@ -47,7 +48,7 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center cursor-pointer">
             <Link href="/" className="text-xl font-bold tracking-tight text-dark flex items-center gap-2">
-              <span className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-serif italic text-lg shadow-lg shadow-primary/30">M</span>
+              <Image src="/logo.svg" alt="Me-mentum" width={32} height={32} className="rounded-lg" />
               Me-mentum
             </Link>
           </div>
