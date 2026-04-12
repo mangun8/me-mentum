@@ -11,7 +11,7 @@ export default function TermsPage() {
     <div className="min-h-screen bg-white py-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-dark mb-2">서비스 이용약관</h1>
-        <p className="text-sm text-gray-400 mb-12">시행일: 2025년 4월 1일</p>
+        <p className="text-sm text-gray-400 mb-12">시행일: 2026년 4월 1일</p>
 
         <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-10">
           <section>
@@ -35,7 +35,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-dark mb-3">제3조 (약관의 효력 및 변경)</h2>
             <ul className="list-decimal pl-5 space-y-1 text-secondary">
               <li>이 약관은 서비스 화면에 게시하거나 기타의 방법으로 이용자에게 공지함으로써 효력이 발생합니다.</li>
-              <li>회사는 합리적인 사유가 있을 경우 관련 법령에 위배되지 않는 범위에서 이 약관을 변경할 수 있으며, 변경된 약관은 공지 후 효력이 발생합니다.</li>
+              <li>회사는 합리적인 사유가 있을 경우 관련 법령에 위배되지 않는 범위에서 이 약관을 변경할 수 있습니다. 일반적인 변경은 적용일 7일 전, 이용자에게 불리한 변경은 최소 30일 전에 서비스 내 공지 또는 이메일을 통해 고지합니다.</li>
             </ul>
           </section>
 
@@ -74,14 +74,15 @@ export default function TermsPage() {
               환불에 관한 세부 사항은{' '}
               <Link href="/refund-policy" className="text-primary hover:underline">환불정책</Link>
               에서 확인하실 수 있습니다.
+              환불 처리는 『전자상거래 등에서의 소비자보호에 관한 법률』 등 관련 법령을 준수하여 진행됩니다.
             </p>
           </section>
 
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">제8조 (코칭 세션 녹화 및 기록)</h2>
             <ul className="list-decimal pl-5 space-y-1 text-secondary">
-              <li>코칭 세션은 서비스 품질 향상 및 이용자에게 세션 기록을 제공하기 위해 녹화될 수 있습니다.</li>
-              <li>녹화된 내용은 AI를 활용하여 텍스트로 변환 및 요약되며, 이용자에게 인사이트로 제공됩니다.</li>
+              <li>코칭 세션의 녹화 및 AI 분석은 이용자의 명시적인 사전 동의를 받은 경우에만 진행합니다. 이용자가 동의하지 않는 경우 녹화 및 AI 분석은 진행하지 않습니다.</li>
+              <li>동의한 경우, 녹화된 내용은 AI를 활용하여 텍스트로 변환 및 요약되며, 이용자에게 인사이트로 제공됩니다.</li>
               <li>녹화본 및 요약 기록은 이용자 본인과 회사의 코치만 열람할 수 있습니다.</li>
             </ul>
           </section>
@@ -123,7 +124,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-semibold text-dark mb-3">제13조 (분쟁 해결)</h2>
             <p className="text-secondary">
               서비스 이용과 관련하여 분쟁이 발생한 경우, 회사와 이용자는 상호 협의하여 해결하도록 노력합니다.
-              협의가 이루어지지 않는 경우, 관할 법원은 회사의 소재지를 관할하는 법원으로 합니다.
+              협의가 이루어지지 않는 경우, 관할 법원은 제소 당시 이용자의 주소를 관할하는 지방법원으로 합니다.
             </p>
           </section>
         </div>

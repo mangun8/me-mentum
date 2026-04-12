@@ -11,7 +11,7 @@ export default function PrivacyPage() {
     <div className="min-h-screen bg-white py-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-dark mb-2">개인정보처리방침</h1>
-        <p className="text-sm text-gray-400 mb-12">시행일: 2025년 4월 1일</p>
+        <p className="text-sm text-gray-400 mb-12">시행일: 2026년 4월 1일</p>
 
         <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-10">
           <section>
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
               <li>회원 가입 및 관리: 회원제 서비스 이용에 따른 본인확인, 서비스 부정이용 방지</li>
               <li>서비스 제공: 코칭 세션 예약·진행·관리, 코칭 결과물 제공</li>
               <li>결제 및 환불 처리: 수강권 결제, 환불 처리</li>
-              <li>마케팅 및 서비스 개선: 서비스 이용 통계 분석, 맞춤형 서비스 제공</li>
+              <li>마케팅 및 서비스 개선 (별도 선택 동의 시): 서비스 이용 통계 분석, 맞춤형 서비스 제공</li>
             </ul>
           </section>
 
@@ -115,9 +115,17 @@ export default function PrivacyPage() {
                   <td className="py-2 pr-4">Cal.com</td>
                   <td className="py-2">코칭 세션 예약 관리</td>
                 </tr>
-                <tr>
+                <tr className="border-b border-gray-100">
                   <td className="py-2 pr-4">Vercel (미국)</td>
                   <td className="py-2">웹사이트 호스팅</td>
+                </tr>
+                <tr className="border-b border-gray-100">
+                  <td className="py-2 pr-4">Zoom (미국)</td>
+                  <td className="py-2">화상 코칭 세션 진행 및 녹화</td>
+                </tr>
+                <tr>
+                  <td className="py-2 pr-4">Google Gemini 등 (글로벌 서버)</td>
+                  <td className="py-2">AI 음성 인식 및 코칭 세션 요약</td>
                 </tr>
               </tbody>
             </table>
@@ -152,7 +160,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">9. 개인정보처리방침의 변경</h2>
             <p className="text-secondary">
-              이 개인정보처리방침은 2025년 4월 1일부터 적용됩니다.
+              이 개인정보처리방침은 2026년 4월 1일부터 적용됩니다.
               변경 사항이 있을 경우 웹사이트를 통해 공지할 예정입니다.
             </p>
           </section>

@@ -11,7 +11,7 @@ export default function RefundPolicyPage() {
     <div className="min-h-screen bg-white py-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-dark mb-2">환불정책</h1>
-        <p className="text-sm text-gray-400 mb-12">시행일: 2025년 4월 1일</p>
+        <p className="text-sm text-gray-400 mb-12">시행일: 2026년 4월 1일</p>
 
         <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-10">
           <section>
@@ -37,6 +37,10 @@ export default function RefundPolicyPage() {
                   <td className="py-3">전액 환불</td>
                 </tr>
                 <tr className="border-b border-gray-100">
+                  <td className="py-3 pr-4">결제 후 7일 초과, 세션 미진행</td>
+                  <td className="py-3">결제 금액의 90% 환불 (위약금 10% 공제)</td>
+                </tr>
+                <tr className="border-b border-gray-100">
                   <td className="py-3 pr-4">1회 세션 진행 후</td>
                   <td className="py-3">결제 금액의 75% 환불</td>
                 </tr>
@@ -55,7 +59,7 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">3. 환불 절차</h2>
             <ul className="list-decimal pl-5 space-y-1 text-secondary">
-              <li>환불을 원하시는 경우, <strong>admin@mementum.me</strong>로 환불 요청 메일을 보내주세요.</li>
+              <li>환불을 원하시는 경우, <strong>admin@mementum.me</strong> 또는 <strong>공식 카카오톡 채널</strong>을 통해 환불을 요청해 주세요.</li>
               <li>환불 요청 접수 후 3영업일 이내에 검토 결과를 안내해 드립니다.</li>
               <li>환불 승인 후 결제 수단에 따라 5~10영업일 이내에 환불이 처리됩니다.</li>
             </ul>
@@ -64,7 +68,7 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">4. 환불 제외 사항</h2>
             <ul className="list-disc pl-5 space-y-1 text-secondary">
-              <li>예약한 코칭 세션에 사전 연락(24시간 전) 없이 불참한 경우, 해당 세션은 진행된 것으로 간주합니다.</li>
+              <li>예약한 코칭 세션 시작 24시간 전까지 사전 연락 없이 불참(노쇼)한 경우, 해당 세션은 정상 진행된 것으로 간주하여 수강 횟수가 차감됩니다.</li>
               <li>이용자의 귀책 사유로 서비스를 이용하지 못한 경우에는 환불이 제한될 수 있습니다.</li>
             </ul>
           </section>
@@ -79,7 +83,7 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">6. 문의</h2>
             <p className="text-secondary">
-              환불 관련 문의사항은 <strong>admin@mementum.me</strong>로 연락해 주세요.
+              환불 관련 문의사항은 <strong>admin@mementum.me</strong> 또는 <strong>공식 카카오톡 채널</strong>로 연락해 주세요.
             </p>
           </section>
         </div>
