@@ -27,10 +27,18 @@ export interface ProgramInfo {
   longDescription: string;
   duration: string;
   price: string;
-  priceValue: number; // For calculation
+  priceValue: number; // 4회 기본 패키지 가격
+  pricePerSession: number; // 회당 단가 (Founder는 0)
   features: string[];
   curriculum: CurriculumItem[];
   recommendedFor: string[];
+}
+
+export interface DiagnosisOption {
+  id: string;
+  name: string;
+  addPrice: number;
+  description: string;
 }
 
 export interface Review {

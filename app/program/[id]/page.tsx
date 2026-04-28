@@ -3,11 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Check, Clock, Users, ChevronRight, Star } from 'lucide-react';
-import { PROGRAMS } from '../../../constants';
+import { Check, Clock, ChevronRight, Star, Info } from 'lucide-react';
+import { DIAGNOSIS_OPTIONS, PROGRAMS, TRIAL_SURCHARGE } from '../../../constants';
 import { TrackType } from '../../../types';
 import Button from '../../../components/Button';
 import { Card, CardHeader, CardTitle, CardContent, Badge, AccordionItem, Separator } from '../../../components/ui-kit';
+
+const formatKRW = (n: number) =>
+  new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(n);
 
 export default function Program() {
   const params = useParams<{ id: string }>();
@@ -20,9 +23,6 @@ export default function Program() {
   // State for accordion
   const [openWeek, setOpenWeek] = useState<number | null>(1);
 
-  // State for pricing plan
-  const [planType, setPlanType] = useState<'basic' | 'premium'>('basic');
-
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
@@ -30,15 +30,6 @@ export default function Program() {
   if (!program) return <div>Program not found</div>;
 
   const isFounder = program.id === 'founder';
-  const currentPrice = isFounder
-    ? program.price
-    : new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(
-        planType === 'basic' ? program.priceValue : program.priceValue + 50000
-      );
-
-  const currentBenefit = planType === 'basic'
-    ? '데이터 기반 자가진단 (LCP 무료 버전)'
-    : '심층 강점 진단 리포트 (CliftonStrengths / LCP Full)';
 
   return (
     <div className="min-h-screen bg-white">
@@ -64,10 +55,6 @@ export default function Program() {
                   <span>{program.duration}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Users className="w-5 h-5 text-primary" />
-                  <span>최대 6명 소수 정예</span>
-                </div>
-                <div className="flex items-center gap-2">
                   <Star className="w-5 h-5 text-primary" />
                   <span>4.9/5.0 만족도</span>
                 </div>
@@ -76,45 +63,39 @@ export default function Program() {
 
             {/* CTA Box for Desktop */}
             <div className="hidden md:block bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 w-80 shrink-0 shadow-lg">
-              {!isFounder && (
-                <div className="flex flex-col gap-2 mb-6">
-                  <div
-                    onClick={() => setPlanType('basic')}
-                    className={`cursor-pointer p-3 rounded-lg border transition-all ${
-                      planType === 'basic'
-                        ? 'bg-primary/20 border-primary ring-1 ring-primary'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-bold text-white">기본 코칭</span>
-                      {planType === 'basic' && <div className="w-2 h-2 rounded-full bg-primary"></div>}
-                    </div>
-                    <p className="text-xs text-gray-400">오프너 진단 (LCP 무료 버전) 포함</p>
+              {isFounder ? (
+                <>
+                  <div className="text-sm text-gray-300 mb-1">수강료</div>
+                  <div className="text-3xl font-bold mb-4">{program.price}</div>
+                </>
+              ) : (
+                <>
+                  <div className="text-sm text-gray-300 mb-1">정규 4회 패키지</div>
+                  <div className="text-3xl font-bold mb-1">{formatKRW(program.priceValue)}</div>
+                  <div className="text-sm text-gray-400 mb-4">
+                    회당 {formatKRW(program.pricePerSession)} × 4회 · 4개월 내 자율 진행
                   </div>
-
-                  <div
-                    onClick={() => setPlanType('premium')}
-                    className={`cursor-pointer p-3 rounded-lg border transition-all ${
-                      planType === 'premium'
-                        ? 'bg-primary/20 border-primary ring-1 ring-primary'
-                        : 'bg-white/5 border-white/10 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-bold text-white">프리미엄 진단 코칭</span>
-                      {planType === 'premium' && <div className="w-2 h-2 rounded-full bg-primary"></div>}
-                    </div>
-                    <p className="text-xs text-gray-400">기본 진단 + 심층 강점 진단 리포트 포함</p>
-                  </div>
-                </div>
+                  <p className="text-xs text-gray-300 bg-white/5 border border-white/10 rounded-lg p-3 mb-4 leading-relaxed">
+                    선택한 진단 옵션에 따라 결제 시 추가 비용이 발생할 수 있습니다.
+                  </p>
+                </>
               )}
-
-              <div className="text-sm text-gray-300 mb-1">수강료</div>
-              <div className="text-3xl font-bold mb-6">{currentPrice}</div>
-              <Link href={`/apply?track=${program.id}&plan=${planType}`}>
+              <Link href={`/apply?track=${program.id}`}>
                 <Button fullWidth className="bg-primary hover:bg-primary-hover border-none">지금 신청하기</Button>
               </Link>
+              {!isFounder && (
+                <>
+                  <Link
+                    href={`/apply?track=${program.id}&mode=trial`}
+                    className="mt-2 block text-center text-xs text-white/60 hover:text-white transition-colors"
+                  >
+                    1회 체험 신청 ({formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}) →
+                  </Link>
+                  <p className="text-[11px] text-center text-gray-400 mt-2 leading-relaxed">
+                    체험 후 정규 패키지 결제 시<br />체험비 전액 차감해드립니다.
+                  </p>
+                </>
+              )}
               <p className="text-xs text-center text-gray-400 mt-3">카드 무이자 할부 가능</p>
             </div>
           </div>
@@ -159,15 +140,19 @@ export default function Program() {
             {/* Curriculum Accordion */}
             <section>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-dark">커리큘럼</h2>
-                <Badge variant="secondary">Total {program.curriculum.length} Weeks</Badge>
+                <h2 className="text-2xl font-bold text-dark">코칭 주제</h2>
+                <Badge variant="secondary">{isFounder ? '맞춤 운영' : '4개월 내 4회 세션'}</Badge>
               </div>
+              <p className="text-sm text-secondary mb-4 flex items-start gap-2">
+                <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <span>4개월 안에 자유로운 일정으로 4회 세션을 진행하며, 아래 주제들 중 본인 상황에 맞춰 함께 다룹니다.</span>
+              </p>
 
               <div className="border border-gray-200 rounded-xl divide-y divide-gray-200">
                 {program.curriculum.map((item) => (
                   <div key={item.week} className="px-6">
                     <AccordionItem
-                      title={`Week ${item.week}. ${item.title}`}
+                      title={`${item.week}. ${item.title}`}
                       isOpen={openWeek === item.week}
                       onClick={() => setOpenWeek(openWeek === item.week ? null : item.week)}
                     >
@@ -185,12 +170,66 @@ export default function Program() {
             <div className="sticky top-24 space-y-6">
               {/* Mobile CTA (Hidden on desktop) */}
               <div className="md:hidden bg-white p-6 rounded-xl border border-gray-200 shadow-lg">
-                <div className="text-sm text-gray-500 mb-1">수강료</div>
-                <div className="text-3xl font-bold mb-4 text-dark">{program.price}</div>
+                {isFounder ? (
+                  <>
+                    <div className="text-sm text-gray-500 mb-1">수강료</div>
+                    <div className="text-3xl font-bold mb-4 text-dark">{program.price}</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-sm text-gray-500 mb-1">정규 4회 패키지</div>
+                    <div className="text-3xl font-bold mb-1 text-dark">{formatKRW(program.priceValue)}</div>
+                    <div className="text-sm text-gray-500 mb-3">
+                      회당 {formatKRW(program.pricePerSession)} × 4회 · 4개월 내 자율
+                    </div>
+                    <p className="text-xs text-gray-600 bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 leading-relaxed">
+                      선택한 진단 옵션에 따라 결제 시 추가 비용이 발생할 수 있습니다.
+                    </p>
+                  </>
+                )}
                 <Link href={`/apply?track=${program.id}`}>
                   <Button fullWidth>지금 신청하기</Button>
                 </Link>
+                {!isFounder && (
+                  <>
+                    <Link
+                      href={`/apply?track=${program.id}&mode=trial`}
+                      className="mt-2 block text-center text-xs text-gray-500 hover:text-primary transition-colors"
+                    >
+                      1회 체험 신청 ({formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}) →
+                    </Link>
+                    <p className="text-[11px] text-center text-gray-500 mt-2 leading-relaxed">
+                      체험 후 정규 패키지 결제 시<br />체험비 전액 차감해드립니다.
+                    </p>
+                  </>
+                )}
               </div>
+
+              {/* Diagnosis Options Card */}
+              {!isFounder && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>선택 가능한 진단 옵션</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <p className="text-xs text-secondary leading-relaxed mb-2">
+                      트랙과 무관하게 본인이 원하는 진단을 자유롭게 선택할 수 있습니다.
+                      옵션은 결제 단계에서 선택하며, 선택에 따라 금액이 추가됩니다.
+                    </p>
+                    {DIAGNOSIS_OPTIONS.map((opt) => (
+                      <div key={opt.id} className="flex items-start justify-between gap-3 p-3 rounded-lg border border-gray-100 bg-gray-50/50">
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-dark">{opt.name}</p>
+                          <p className="text-xs text-secondary mt-1 leading-relaxed whitespace-pre-line">{opt.description}</p>
+                        </div>
+                        <span className={`text-sm font-bold shrink-0 ${opt.addPrice === 0 ? 'text-primary' : 'text-dark'}`}>
+                          {opt.addPrice === 0 ? '기본 포함' : `+${formatKRW(opt.addPrice)}`}
+                        </span>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Benefits Card */}
               <Card>
@@ -198,15 +237,7 @@ export default function Program() {
                   <CardTitle>수강생 혜택</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {/* Dynamic First Benefit */}
-                  {!isFounder && (
-                    <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                      <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                      <span className="text-sm font-bold text-primary">{currentBenefit}</span>
-                    </div>
-                  )}
-
-                  {program.features.slice(isFounder ? 0 : 1).map((feature, idx) => (
+                  {program.features.map((feature, idx) => (
                     <div key={idx} className="flex items-start gap-3 px-3">
                       <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                       <span className="text-sm text-secondary">{feature}</span>

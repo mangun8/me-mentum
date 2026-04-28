@@ -1,4 +1,4 @@
-import { ProgramInfo, Review, TrackType } from './types';
+import { DiagnosisOption, ProgramInfo, Review, TrackType } from './types';
 import { Target, TrendingUp, Users, Zap } from 'lucide-react';
 
 export const NAV_LINKS = [
@@ -15,11 +15,12 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     title: 'Junior Track',
     target: '1-3년차 실무자',
     description: '막연한 열심히 함을 넘어, 성과를 증명하는 핵심 인재로 성장합니다.',
-    longDescription: 'Junior Track은 이제 막 커리어를 시작한 주니어들이 겪는 성장통을 해결합니다. 자신의 강점을 발견하고, 이를 업무 성과로 연결하는 구체적인 방법론을 4주간 집중적으로 훈련합니다.',
-    duration: '4주 (주 1회 세션)',
-    price: '₩400,000',
+    longDescription: 'Junior Track은 이제 막 커리어를 시작한 주니어들이 겪는 성장통을 해결합니다. 자신의 강점을 발견하고, 이를 업무 성과로 연결하는 구체적인 방법론을 총 4회 세션으로 훈련합니다.',
+    duration: '4개월 내 자율 진행 · 총 4회 세션',
+    price: '회당 10만원',
     priceValue: 400000,
-    features: ['강점 진단 (CliftonStrengths)', '업무 회고 프레임워크', '커뮤니케이션 스킬', '커리어 로드맵 설계'],
+    pricePerSession: 100000,
+    features: ['전문 코칭 도구를 통한 데이터 기반 진단', '업무 회고 프레임워크', '커뮤니케이션 스킬', '커리어 로드맵 설계'],
     recommendedFor: [
       '열심히 일하지만 성과가 나지 않아 고민인 분',
       '상사와의 커뮤니케이션이 어려운 분',
@@ -37,11 +38,12 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     title: 'Senior/Lead Track',
     target: '팀장 및 파트리더',
     description: '실무자에서 관리자로, 팀의 성과를 이끄는 나만의 리더십 스타일을 구축합니다.',
-    longDescription: '실무 능력만으로는 좋은 리더가 될 수 없습니다. Senior Track은 관리자로서 겪는 딜레마를 해결하고, 팀의 심리적 안전감을 구축하며 성과를 내는 리더십 스킬을 전수합니다.',
-    duration: '8주 (주 1회 세션)',
-    price: '₩1,200,000',
-    priceValue: 1200000,
-    features: ['리더십 스타일 진단', '피드백 & 1on1 스킬', '팀 빌딩 및 동기부여', '위임의 기술'],
+    longDescription: '실무 능력만으로는 좋은 리더가 될 수 없습니다. Senior Track은 관리자로서 겪는 딜레마를 해결하고, 팀의 심리적 안전감을 구축하며 성과를 내는 리더십 스킬을 총 4회 세션으로 다룹니다.',
+    duration: '4개월 내 자율 진행 · 총 4회 세션',
+    price: '회당 20만원',
+    priceValue: 800000,
+    pricePerSession: 200000,
+    features: ['전문 코칭 도구를 통한 데이터 기반 진단', '피드백 & 1on1 스킬', '팀 빌딩 및 동기부여', '위임의 기술'],
     recommendedFor: [
       '팀장 승진 후 역할 혼란을 겪는 분',
       '팀원 관리와 피드백이 두려운 분',
@@ -63,11 +65,12 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     title: 'Executive Track',
     target: 'C-Level 및 임원',
     description: '조직의 비전과 정렬된 의사결정 체계와 경영 철학을 정립합니다.',
-    longDescription: 'Executive Track은 고독한 의사결정의 순간에 명확한 기준이 되어줄 경영 철학과 조직 문화를 다룹니다. 격주 세션을 통해 현업의 문제를 깊이 있게 다룹니다.',
-    duration: '12주 (격주 세션)',
-    price: '₩3,000,000',
-    priceValue: 3000000,
-    features: ['조직문화 진단', '전략적 의사결정', '채용 및 평가 시스템', '경영자 코칭'],
+    longDescription: 'Executive Track은 고독한 의사결정의 순간에 명확한 기준이 되어줄 경영 철학과 조직 문화를 다룹니다. 총 4회 세션을 통해 현업의 문제를 깊이 있게 풀어냅니다.',
+    duration: '4개월 내 자율 진행 · 총 4회 세션',
+    price: '회당 30만원',
+    priceValue: 1200000,
+    pricePerSession: 300000,
+    features: ['전문 코칭 도구를 통한 데이터 기반 진단', '전략적 의사결정', '채용 및 평가 시스템', '경영자 코칭'],
     recommendedFor: [
       '조직의 비전과 미션을 재정립하고 싶은 경영진',
       '건강한 조직문화를 만들고 싶은 C-Level',
@@ -88,10 +91,11 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     target: '초기 창업가',
     description: '창업가의 멘탈 관리부터 조직의 0 to 1을 만드는 핵심 원칙을 코칭합니다.',
     longDescription: 'Founder Track은 스타트업의 생존과 성장을 위한 전방위적 코칭입니다. 투자 유치, 공동창업자 관계, 초기 멤버 빌딩 등 창업가가 마주하는 난제들을 함께 풉니다.',
-    duration: '상시 (구독형)',
+    duration: '맞춤형 운영 (상담 후 결정)',
     price: '문의',
     priceValue: 0,
-    features: ['창업가 성향 분석 (LCP)', 'IR 및 투자자 커뮤니케이션', '공동창업자 갈등 관리', '비전 수립'],
+    pricePerSession: 0,
+    features: ['전문 코칭 도구를 통한 데이터 기반 진단', 'IR 및 투자자 커뮤니케이션', '공동창업자 갈등 관리', '비전 수립'],
     recommendedFor: [
       'Seed ~ Series A 단계의 창업가',
       '공동창업자 간의 알력 다툼으로 고민인 대표',
@@ -105,6 +109,35 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
     ]
   }
 };
+
+export const DIAGNOSIS_OPTIONS: DiagnosisOption[] = [
+  {
+    id: 'basic',
+    name: '기본 (LCP 무료 진단)',
+    addPrice: 0,
+    description: 'Leadership Circle Profile 무료 버전.\n모든 트랙에 기본 제공됩니다.'
+  },
+  {
+    id: 'strengths-top',
+    name: '상위 강점 진단',
+    addPrice: 40000,
+    description: 'Gallup CliftonStrengths 상위 5대 테마 리포트와 디브리핑.'
+  },
+  {
+    id: 'strengths-full',
+    name: '전체 강점 진단',
+    addPrice: 100000,
+    description: 'Gallup CliftonStrengths 34개 전체 테마 리포트와 심층 디브리핑.'
+  },
+  {
+    id: 'lcp-full',
+    name: '풀 LCP 진단',
+    addPrice: 800000,
+    description: 'Leadership Circle Profile 360도\n풀 버전 + 심층 디브리핑.'
+  }
+];
+
+export const TRIAL_SURCHARGE = 100000; // 1회 체험권 = 회당 단가 + 추가금
 
 export const COACHING_PROCESS_STEPS = [
   {
