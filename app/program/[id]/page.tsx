@@ -125,7 +125,7 @@ export default function Program() {
               <div className="grid grid-cols-1 gap-4">
                 {program.recommendedFor.map((rec, idx) => (
                   <Card key={idx} className="bg-blue-50/50 border-blue-100 hover:border-primary/30 transition-colors">
-                    <CardContent className="flex items-center gap-4 py-4">
+                    <CardContent className="flex items-center gap-4 py-4 pt-4">
                       <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                         <Check className="w-5 h-5 text-primary" />
                       </div>
