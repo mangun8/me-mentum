@@ -11,14 +11,15 @@ export default function RefundPolicyPage() {
     <div className="min-h-screen bg-white py-24">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold text-dark mb-2">환불정책</h1>
-        <p className="text-sm text-gray-400 mb-12">시행일: 2026년 4월 1일</p>
+        <p className="text-sm text-gray-400 mb-12">시행일: 2026년 4월 29일</p>
 
         <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-10">
           <section>
             <h2 className="text-lg font-semibold text-dark mb-3">1. 환불 원칙</h2>
             <p className="text-secondary">
               미멘텀(이하 &quot;회사&quot;)은 이용자의 권익 보호를 위해 아래와 같은 환불 기준을 적용합니다.
-              수강권(4회권) 구매 후 환불은 코칭 세션 진행 상황에 따라 차등 적용됩니다.
+              수강권 구매 후 단 한 번의 세션도 진행되지 않은 경우에는 결제일로부터 경과한 기간과 무관하게 전액 환불해 드리며,
+              세션이 시작된 이후에는 진행 횟수에 따라 차등 적용됩니다.
             </p>
           </section>
 
@@ -33,12 +34,8 @@ export default function RefundPolicyPage() {
               </thead>
               <tbody className="text-secondary">
                 <tr className="border-b border-gray-100">
-                  <td className="py-3 pr-4">결제 후 7일 이내, 세션 미진행</td>
+                  <td className="py-3 pr-4">세션 미진행 (기간 무관)</td>
                   <td className="py-3">전액 환불</td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-3 pr-4">결제 후 7일 초과, 세션 미진행</td>
-                  <td className="py-3">결제 금액의 90% 환불 (위약금 10% 공제)</td>
                 </tr>
                 <tr className="border-b border-gray-100">
                   <td className="py-3 pr-4">1회 세션 진행 후</td>
