@@ -72,31 +72,32 @@ export default function Program() {
                 <>
                   <div className="text-sm text-gray-300 mb-1">정규 4회 패키지</div>
                   <div className="text-3xl font-bold mb-1">{formatKRW(program.priceValue)}</div>
-                  <div className="text-sm text-gray-400 mb-4">
+                  <div className="text-sm text-gray-400">
                     회당 {formatKRW(program.pricePerSession)} × 4회 · 4개월 내 자율 진행
                   </div>
-                  <p className="text-xs text-gray-300 bg-white/5 border border-white/10 rounded-lg p-3 mb-4 leading-relaxed">
-                    선택한 진단 옵션에 따라 결제 시 추가 비용이 발생할 수 있습니다.
+                  <p className="text-[11px] text-gray-400 mt-1 mb-4">
+                    * 선택 진단 옵션에 따라 추가 비용 발생
                   </p>
                 </>
               )}
               <Link href={`/apply?track=${program.id}`}>
-                <Button fullWidth className="bg-primary hover:bg-primary-hover border-none">지금 신청하기</Button>
+                <Button fullWidth className="bg-primary hover:bg-primary-hover border-none">정규 4회 신청</Button>
               </Link>
               {!isFounder && (
                 <>
-                  <Link
-                    href={`/apply?track=${program.id}&mode=trial`}
-                    className="mt-2 block text-center text-xs text-white/60 hover:text-white transition-colors"
-                  >
-                    1회 체험 신청 ({formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}) →
+                  <Link href={`/apply?track=${program.id}&mode=trial`} className="block mt-2">
+                    <Button
+                      fullWidth
+                      className="bg-transparent text-white border border-white/30 hover:bg-white/10 hover:border-white/50 focus:ring-white/40"
+                    >
+                      1회 체험 · {formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}
+                    </Button>
                   </Link>
                   <p className="text-[11px] text-center text-gray-400 mt-2 leading-relaxed">
-                    체험 후 정규 패키지 결제 시<br />체험비 전액 차감해드립니다.
+                    체험 후 정규 결제 시 체험비 전액 차감
                   </p>
                 </>
               )}
-              <p className="text-xs text-center text-gray-400 mt-3">카드 무이자 할부 가능</p>
             </div>
           </div>
         </div>
@@ -179,27 +180,26 @@ export default function Program() {
                   <>
                     <div className="text-sm text-gray-500 mb-1">정규 4회 패키지</div>
                     <div className="text-3xl font-bold mb-1 text-dark">{formatKRW(program.priceValue)}</div>
-                    <div className="text-sm text-gray-500 mb-3">
+                    <div className="text-sm text-gray-500">
                       회당 {formatKRW(program.pricePerSession)} × 4회 · 4개월 내 자율
                     </div>
-                    <p className="text-xs text-gray-600 bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 leading-relaxed">
-                      선택한 진단 옵션에 따라 결제 시 추가 비용이 발생할 수 있습니다.
+                    <p className="text-[11px] text-gray-400 mt-1 mb-4">
+                      * 선택 진단 옵션에 따라 추가 비용 발생
                     </p>
                   </>
                 )}
                 <Link href={`/apply?track=${program.id}`}>
-                  <Button fullWidth>지금 신청하기</Button>
+                  <Button fullWidth>정규 4회 신청</Button>
                 </Link>
                 {!isFounder && (
                   <>
-                    <Link
-                      href={`/apply?track=${program.id}&mode=trial`}
-                      className="mt-2 block text-center text-xs text-gray-500 hover:text-primary transition-colors"
-                    >
-                      1회 체험 신청 ({formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}) →
+                    <Link href={`/apply?track=${program.id}&mode=trial`} className="block mt-2">
+                      <Button fullWidth variant="outline">
+                        1회 체험 · {formatKRW(program.pricePerSession + TRIAL_SURCHARGE)}
+                      </Button>
                     </Link>
                     <p className="text-[11px] text-center text-gray-500 mt-2 leading-relaxed">
-                      체험 후 정규 패키지 결제 시<br />체험비 전액 차감해드립니다.
+                      체험 후 정규 결제 시 체험비 전액 차감
                     </p>
                   </>
                 )}
