@@ -249,7 +249,7 @@ export default function Program() {
               {/* Coach Profile Card (Mock) */}
               <Card>
                 <CardHeader>
-                  <CardTitle>전담 코치</CardTitle>
+                  <CardTitle>코치 소개</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-4 mb-4">
