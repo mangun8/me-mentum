@@ -30,12 +30,12 @@ export default function About() {
             <div className="w-full md:w-1/3 sticky top-24">
               <div className="aspect-[3/4] bg-gray-200 rounded-2xl overflow-hidden relative shadow-xl">
                 <img
-                  src="https://picsum.photos/400/600?grayscale"
-                  alt="Head Coach"
+                  src="/coach-yonghun.jpg"
+                  alt="Yonghun Jeong (정용훈)"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/70 to-transparent p-6">
-                  <p className="text-white font-bold text-xl">Sarah Kim</p>
+                  <p className="text-white font-bold text-xl">Yonghun Jeong(정용훈)</p>
                   <p className="text-gray-300 text-sm">Head Coach & Founder</p>
                 </div>
               </div>

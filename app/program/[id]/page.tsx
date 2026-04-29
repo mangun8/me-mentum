@@ -254,10 +254,14 @@ export default function Program() {
                 <CardContent>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                      <img src="https://picsum.photos/200" alt="Coach" className="w-full h-full object-cover" />
+                      <img
+                        src="/coach-yonghun.jpg"
+                        alt="Yonghun Jeong (정용훈)"
+                        className="w-full h-full object-cover object-top"
+                      />
                     </div>
                     <div>
-                      <p className="font-bold text-sm">Sarah Kim</p>
+                      <p className="font-bold text-sm">Yonghun Jeong(정용훈)</p>
                       <p className="text-xs text-gray-500">KPC 인증 코치</p>
                     </div>
                   </div>
