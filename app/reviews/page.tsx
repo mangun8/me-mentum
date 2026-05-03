@@ -1,5 +1,11 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import { REVIEWS } from '../../constants';
+
+export const metadata: Metadata = {
+  title: '코칭 리뷰',
+  description: '미멘텀 코칭을 받은 주니어·리더·임원들의 변화 이야기.',
+};
 
 export default function Reviews() {
   return (

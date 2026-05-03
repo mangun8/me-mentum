@@ -1,7 +1,13 @@
 import React from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { INSIGHTS_ARTICLES } from '../../constants';
 import { ArrowRight } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: '인사이트',
+  description: '커리어 성장과 리더십에 대한 미멘텀의 인사이트 글.',
+};
 
 export default function Insights() {
   return (

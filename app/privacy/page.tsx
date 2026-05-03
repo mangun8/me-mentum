@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: '개인정보처리방침 | Me-mentum',
-  description: 'Me-mentum 개인정보처리방침',
+  title: '개인정보처리방침',
+  description: 'Me-mentum 개인정보처리방침 — 수집·이용·보관 항목과 이용자 권리.',
 };
 
 export default function PrivacyPage() {

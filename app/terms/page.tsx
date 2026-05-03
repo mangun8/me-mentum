@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: '서비스 이용약관 | Me-mentum',
-  description: 'Me-mentum 서비스 이용약관',
+  title: '서비스 이용약관',
+  description: 'Me-mentum 서비스 이용약관 — 코칭 서비스 이용 조건과 회원의 권리·의무.',
 };
 
 export default function TermsPage() {

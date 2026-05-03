@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: '환불정책 | Me-mentum',
-  description: 'Me-mentum 환불정책',
+  title: '환불정책',
+  description: 'Me-mentum 환불정책 — 정규 패키지·체험권·전환 시 환불 기준.',
 };
 
 export default function RefundPolicyPage() {

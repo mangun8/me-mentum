@@ -9,12 +9,40 @@ const inter = Inter({ subsets: ['latin'] });
 
 const pretendardCdn = 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css';
 
+const SITE_URL = 'https://mementum.me';
+const SITE_NAME = 'Me-mentum';
+const SITE_TITLE = 'Me-mentum — 데이터 기반 비즈니스 코칭';
+const SITE_DESCRIPTION =
+  '갤럽 강점 진단과 LCP 리더십 프로파일 데이터를 기반으로, 주니어부터 임원·창업가까지 단계별 코칭을 제공합니다.';
+
 export const metadata: Metadata = {
-  title: 'Me-mentum Coaching Lab',
-  description: '데이터 기반 코칭으로 당신의 잠재력을 깨우세요.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_TITLE,
+    template: '%s | Me-mentum',
+  },
+  description: SITE_DESCRIPTION,
   icons: {
     icon: '/logo.svg',
     apple: '/logo.svg',
+  },
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ko_KR',
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: '/logo.svg', width: 512, height: 512, alt: SITE_NAME }],
+  },
+  twitter: {
+    card: 'summary',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ['/logo.svg'],
   },
 };
 
