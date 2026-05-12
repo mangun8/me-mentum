@@ -243,22 +243,22 @@ export const COACH_CERTIFICATIONS = [
     id: 'gallup',
     name: "Gallup CliftonStrengths",
     title: "Gallup 강점 코칭",
-    summary: "재능을 성과로 연결하는 과학적 도구",
-    description: "Gallup CliftonStrengths는 40년 이상의 연구를 통해 개발된 진단 도구입니다. 개인의 고유한 재능 테마 34가지를 분석하여, 약점을 보완하기보다 강점에 집중함으로써 탁월한 성과를 내도록 돕습니다. Me-mentum은 공식 인증 코치가 직접 디브리핑을 진행합니다."
-  },
-  {
-    id: 'lcp',
-    name: "LCP (Leadership Circle Profile)",
-    title: "LCP 리더십 프로파일",
-    summary: "리더십의 내면과 외면을 통합 진단",
-    description: "LCP는 리더의 행동 패턴(외면)과 그 행동을 유발하는 사고방식(내면)을 동시에 분석하는 유일한 360도 진단 도구입니다. '창조적 리더십'과 '반응적 경향성'의 비율을 분석하여, 리더십의 효율성을 저해하는 근본적인 원인을 파악하고 성숙한 리더로의 전환을 가이드합니다."
+    summary: "재능을 성과로 연결하는 과학적 도구 — GGSC 48기 인증",
+    description: "Gallup CliftonStrengths는 40년 이상의 연구를 통해 개발된 진단 도구로, Fortune 500대 기업 중 90% 이상이 도입하여 3,500만 명이 경험한 세계적 표준입니다. 정용훈 코치는 갤럽 글로벌 강점 코치(GGSC, Gallup Global Strengths Coach) 48기 자격을 보유하고 있으며, Top5(강점 중심) 또는 Top34(강점·약점 통합) 디브리핑을 직접 진행합니다."
   },
   {
     id: 'coactive',
-    name: "Co-Active Coaching",
+    name: "Co-Active Coaching Model",
     title: "Co-Active 코칭 모델",
-    summary: "전인적 성장을 위한 코칭의 정석",
-    description: "CTI(The Coaches Training Institute)의 Co-Active 모델은 코치와 피코치가 대등한 파트너로서 협력하는 관계를 지향합니다. 단순히 문제를 해결하는 것을 넘어, 피코치가 스스로의 잠재력을 발견하고 삶의 모든 영역에서 주도적인 선택을 할 수 있도록 돕는 강력한 프로세스입니다."
+    summary: "코칭의 골든 스탠다드 — CTI 정식 교육과정 수료",
+    description: "Co-Active는 하버드 의과대학 제휴 병원의 학술적 인정과 포츈 100대 기업 1/3의 도입으로 검증된 '코칭의 골든 스탠다드'입니다. 코치와 피코치가 대등한 파트너로 협력하며, 문제 해결을 넘어 피코치가 스스로의 잠재력을 발견하도록 돕습니다. 정용훈 코치는 CTI의 Co-Active 정식 교육과정을 수료했으며, 현재 CPCC(Certified Professional Co-Active Coach) 인증 취득을 진행하고 있습니다."
+  },
+  {
+    id: 'experience',
+    name: "Founder's Experience",
+    title: "스타트업 현장 경험",
+    summary: "4명에서 100명으로, 200억 매출까지의 동행",
+    description: "스타트업 4번째 멤버로 합류해 회사가 100명 규모, 결제액 200억까지 성장하는 전 과정을 함께했습니다. 마케팅·제품·운영을 가리지 않고 경험했고, 500명 이상을 채용·멘토링·교육 현장에서 만나며 '사람과 조직'에 대한 입체적인 시각을 쌓아왔습니다. 이론이 아닌, 실제로 일이 굴러가는 방식을 아는 코치입니다."
   }
 ];
 

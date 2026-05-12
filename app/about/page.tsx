@@ -50,8 +50,9 @@ export default function About() {
                   <div>
                     <h3 className="text-xl font-bold mb-2">Professionalism</h3>
                     <p className="text-secondary">
-                      ICF(국제코칭연맹) 인증 코치 자격(PCC)을 보유하고 있으며,
-                      10년 이상의 IT 스타트업 HR 리더 경험을 바탕으로 현실적인 솔루션을 제시합니다.
+                      갤럽 글로벌 강점 코치(GGSC) 48기 자격을 보유하고 있으며,
+                      코칭의 골든 스탠다드로 불리는 Co-Active 정식 교육과정을 수료했습니다.
+                      현재 CPCC와 Leadership Circle Profile Coach 자격 취득을 진행하고 있습니다.
                     </p>
                   </div>
                 </div>
@@ -60,10 +61,11 @@ export default function About() {
                     <BookOpen className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold mb-2">Evidence-Based</h3>
+                    <h3 className="text-xl font-bold mb-2">Real-World Insight</h3>
                     <p className="text-secondary">
-                      단순한 '감'이 아닌, 심리학과 경영학 이론에 기반한 진단 도구를 사용합니다.
-                      모든 코칭 세션은 구조화된 프로세스를 따릅니다.
+                      스타트업 4번째 멤버로 합류해 회사가 100명 규모, 결제액 200억까지 성장하는
+                      전 과정을 함께했습니다. 마케팅·제품·운영 전반을 거치며 500명 이상을
+                      채용·멘토링 현장에서 만나, 사람과 조직에 대한 입체적인 시각을 쌓아왔습니다.
                     </p>
                   </div>
                 </div>
