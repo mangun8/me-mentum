@@ -86,7 +86,7 @@ export default function ProgramLanding() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {Object.values(PROGRAMS).map((program) => (
+            {Object.values(PROGRAMS).filter((p) => p.audience !== 'friend').map((program) => (
               <Link key={program.id} href={`/program/${program.id}`} className="group">
                 <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 overflow-hidden">
                   <CardContent className="p-8 flex flex-col h-full">

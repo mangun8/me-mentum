@@ -30,6 +30,7 @@ export default function Program() {
   if (!program) return <div>Program not found</div>;
 
   const isFounder = program.id === 'founder';
+  const isFriend = program.audience === 'friend';
 
   return (
     <div className="min-h-screen bg-white">
@@ -63,7 +64,15 @@ export default function Program() {
 
             {/* CTA Box for Desktop */}
             <div className="hidden md:block bg-white/5 backdrop-blur-md p-6 rounded-2xl border border-white/10 w-80 shrink-0 shadow-lg">
-              {isFounder ? (
+              {isFriend ? (
+                <>
+                  <div className="text-sm text-gray-300 mb-1">1:1 단발 세션</div>
+                  <div className="text-3xl font-bold mb-1">{formatKRW(program.priceValue)}</div>
+                  <div className="text-sm text-gray-400 mb-4">
+                    1회 / 60분 · 진단 옵션 없음
+                  </div>
+                </>
+              ) : isFounder ? (
                 <>
                   <div className="text-sm text-gray-300 mb-1">수강료</div>
                   <div className="text-3xl font-bold mb-4">{program.price}</div>
@@ -81,9 +90,11 @@ export default function Program() {
                 </>
               )}
               <Link href={`/apply?track=${program.id}`}>
-                <Button fullWidth className="bg-primary hover:bg-primary-hover border-none">정규 4회 신청</Button>
+                <Button fullWidth className="bg-primary hover:bg-primary-hover border-none">
+                  {isFriend ? '신청하기' : '정규 4회 신청'}
+                </Button>
               </Link>
-              {!isFounder && (
+              {!isFounder && !isFriend && (
                 <>
                   <Link href={`/apply?track=${program.id}&mode=trial`} className="block mt-2">
                     <Button
@@ -142,11 +153,15 @@ export default function Program() {
             <section>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-dark">코칭 주제</h2>
-                <Badge variant="secondary">{isFounder ? '맞춤 운영' : '4개월 내 4회 세션'}</Badge>
+                <Badge variant="secondary">{isFriend ? '1회 단발' : isFounder ? '맞춤 운영' : '4개월 내 4회 세션'}</Badge>
               </div>
               <p className="text-sm text-secondary mb-4 flex items-start gap-2">
                 <Info className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <span>4개월 안에 자유로운 일정으로 4회 세션을 진행하며, 아래 주제들 중 본인 상황에 맞춰 함께 다룹니다.</span>
+                <span>
+                  {isFriend
+                    ? '코치와 사전 협의된 주제로 60분간 진행됩니다.'
+                    : '4개월 안에 자유로운 일정으로 4회 세션을 진행하며, 아래 주제들 중 본인 상황에 맞춰 함께 다룹니다.'}
+                </span>
               </p>
 
               <div className="border border-gray-200 rounded-xl divide-y divide-gray-200">
@@ -171,7 +186,15 @@ export default function Program() {
             <div className="sticky top-24 space-y-6">
               {/* Mobile CTA (Hidden on desktop) */}
               <div className="md:hidden bg-white p-6 rounded-xl border border-gray-200 shadow-lg">
-                {isFounder ? (
+                {isFriend ? (
+                  <>
+                    <div className="text-sm text-gray-500 mb-1">1:1 단발 세션</div>
+                    <div className="text-3xl font-bold mb-1 text-dark">{formatKRW(program.priceValue)}</div>
+                    <div className="text-sm text-gray-500 mb-4">
+                      1회 / 60분 · 진단 옵션 없음
+                    </div>
+                  </>
+                ) : isFounder ? (
                   <>
                     <div className="text-sm text-gray-500 mb-1">수강료</div>
                     <div className="text-3xl font-bold mb-4 text-dark">{program.price}</div>
@@ -189,9 +212,9 @@ export default function Program() {
                   </>
                 )}
                 <Link href={`/apply?track=${program.id}`}>
-                  <Button fullWidth>정규 4회 신청</Button>
+                  <Button fullWidth>{isFriend ? '신청하기' : '정규 4회 신청'}</Button>
                 </Link>
-                {!isFounder && (
+                {!isFounder && !isFriend && (
                   <>
                     <Link href={`/apply?track=${program.id}&mode=trial`} className="block mt-2">
                       <Button fullWidth variant="outline">
@@ -206,7 +229,7 @@ export default function Program() {
               </div>
 
               {/* Diagnosis Options Card */}
-              {!isFounder && (
+              {!isFounder && !isFriend && (
                 <Card>
                   <CardHeader>
                     <CardTitle>선택 가능한 진단 옵션</CardTitle>

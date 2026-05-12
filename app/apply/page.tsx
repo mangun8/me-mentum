@@ -41,6 +41,7 @@ function ApplyContent() {
 
   const program = getProgram(selectedTrack);
   const option = getDiagnosisOption(selectedOption);
+  const isFriend = program?.audience === 'friend';
 
   const isTrial = packageMode === 'trial';
   const baseAmount = !program
@@ -48,10 +49,16 @@ function ApplyContent() {
     : isTrial
       ? program.pricePerSession + TRIAL_SURCHARGE
       : program.priceValue;
-  // 체험권 차감은 정규 패키지(full)에만 적용
-  const creditDiscount = isTrial ? 0 : Math.min(trialCreditAmount, baseAmount + option.addPrice);
+  // 체험권 차감은 정규 패키지(full)에만 적용, 친구 트랙은 차감 없음
+  const creditDiscount = isTrial || isFriend
+    ? 0
+    : Math.min(trialCreditAmount, baseAmount + option.addPrice);
   const totalAmount = baseAmount + option.addPrice - creditDiscount;
-  const baseLabel = isTrial ? '1회 체험권' : `${program?.title ?? ''} 4회 패키지`;
+  const baseLabel = isFriend
+    ? '1:1 정용훈 코칭 (1회 60분)'
+    : isTrial
+      ? '1회 체험권'
+      : `${program?.title ?? ''} 4회 패키지`;
 
   useEffect(() => {
     if (initialTrackId) {
@@ -74,6 +81,14 @@ function ApplyContent() {
       setPackageMode('full');
     }
   }, [program, packageMode]);
+
+  // 친구 트랙은 단발 단일 옵션 강제
+  useEffect(() => {
+    if (isFriend) {
+      setPackageMode('full');
+      setSelectedOption('basic');
+    }
+  }, [isFriend]);
 
   // 트랙 변경 시 체험권 잔액 조회
   useEffect(() => {
@@ -131,9 +146,11 @@ function ApplyContent() {
     setIsProcessing(true);
 
     const orderId = `mementum_${selectedTrack}_${packageMode}_${selectedOption}_${Date.now()}`;
-    const orderLabel = isTrial
-      ? `${program.title} 1회 체험`
-      : `${program.title} 4회 패키지`;
+    const orderLabel = isFriend
+      ? `${program.title} 1회`
+      : isTrial
+        ? `${program.title} 1회 체험`
+        : `${program.title} 4회 패키지`;
 
     try {
       await widgets.requestPayment({
@@ -172,42 +189,60 @@ function ApplyContent() {
           {/* Step 1: Track + Diagnosis Option Selection */}
           {step === ApplyStep.TRACK_SELECTION && (
             <div className="space-y-8">
-              <div className="space-y-4">
-                <h2 className="text-xl font-bold flex items-center gap-2">
-                  <User className="w-5 h-5 text-primary" />
-                  1. 트랙 선택
-                </h2>
-                <div className="grid grid-cols-1 gap-4">
-                  {Object.values(PROGRAMS).map((p) => (
-                    <div
-                      key={p.id}
-                      onClick={() => setSelectedTrack(p.id)}
-                      className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                        selectedTrack === p.id
-                          ? 'border-primary bg-blue-50 shadow-sm'
-                          : 'border-gray-100 hover:border-blue-200 hover:bg-blue-50/50'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className={`font-bold ${selectedTrack === p.id ? 'text-primary' : 'text-dark'}`}>
-                            {p.title}
-                          </h3>
-                          <p className="text-sm text-gray-500 mt-1">{p.target} · {p.price}</p>
-                        </div>
-                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                          selectedTrack === p.id ? 'border-primary bg-primary' : 'border-gray-300'
-                        }`}>
-                          {selectedTrack === p.id && <Check className="w-4 h-4 text-white" />}
+              {isFriend ? (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    신청 내역
+                  </h2>
+                  <div className="p-5 rounded-xl border-2 border-primary bg-blue-50">
+                    <h3 className="font-bold text-primary text-lg">{program?.title}</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {program?.target} · 1회 60분 · {formatKRW(program?.priceValue ?? 0)}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-3 leading-relaxed">
+                      {program?.longDescription}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-bold flex items-center gap-2">
+                    <User className="w-5 h-5 text-primary" />
+                    1. 트랙 선택
+                  </h2>
+                  <div className="grid grid-cols-1 gap-4">
+                    {Object.values(PROGRAMS).filter((p) => p.audience !== 'friend').map((p) => (
+                      <div
+                        key={p.id}
+                        onClick={() => setSelectedTrack(p.id)}
+                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
+                          selectedTrack === p.id
+                            ? 'border-primary bg-blue-50 shadow-sm'
+                            : 'border-gray-100 hover:border-blue-200 hover:bg-blue-50/50'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <h3 className={`font-bold ${selectedTrack === p.id ? 'text-primary' : 'text-dark'}`}>
+                              {p.title}
+                            </h3>
+                            <p className="text-sm text-gray-500 mt-1">{p.target} · {p.price}</p>
+                          </div>
+                          <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                            selectedTrack === p.id ? 'border-primary bg-primary' : 'border-gray-300'
+                          }`}>
+                            {selectedTrack === p.id && <Check className="w-4 h-4 text-white" />}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Package Mode (Founder 제외) */}
-              {(program?.pricePerSession ?? 0) > 0 && (
+              {/* Package Mode (Founder·친구 트랙 제외) */}
+              {!isFriend && (program?.pricePerSession ?? 0) > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-bold flex items-center gap-2">
                     <Package className="w-5 h-5 text-primary" />
@@ -260,8 +295,22 @@ function ApplyContent() {
                 </div>
               )}
 
-              {/* Diagnosis Option (Founder는 옵션 선택 불가, 문의로 안내) */}
-              {(program?.priceValue ?? 0) > 0 && (
+              {/* 친구 트랙 결제 요약 (진단 옵션 없음) */}
+              {isFriend && (
+                <div className="bg-gray-50 p-4 rounded-xl space-y-2">
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>{baseLabel}</span>
+                    <span className="font-medium text-dark">{formatKRW(baseAmount)}</span>
+                  </div>
+                  <div className="flex justify-between text-base font-bold border-t border-gray-200 pt-2 mt-2">
+                    <span>예상 결제금액</span>
+                    <span className="text-primary">{formatKRW(totalAmount)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Diagnosis Option (Founder·친구 트랙 제외) */}
+              {!isFriend && (program?.priceValue ?? 0) > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-bold flex items-center gap-2">
                     <Stethoscope className="w-5 h-5 text-primary" />

@@ -2,10 +2,18 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
 // 로그인 없이 접근 불가한 경로
-const PROTECTED_ROUTES = ['/dashboard', '/apply'];
+const PROTECTED_ROUTES = ['/dashboard', '/apply', '/redeem'];
 
 // 로그인 상태에서 접근 불필요한 경로
 const AUTH_ROUTES = ['/login'];
+
+// 코치(운영자) role 필요 경로
+const ADMIN_ROUTES = ['/admin', '/api/admin'];
+
+const COACH_EMAILS = (process.env.COACH_EMAILS ?? '')
+  .split(',')
+  .map((s) => s.trim().toLowerCase())
+  .filter(Boolean);
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -55,6 +63,40 @@ export async function middleware(request: NextRequest) {
     const dashboardUrl = request.nextUrl.clone();
     dashboardUrl.pathname = '/dashboard';
     return NextResponse.redirect(dashboardUrl);
+  }
+
+  // 어드민 경로: 로그인 + coach role 필요
+  const isAdminRoute = ADMIN_ROUTES.some((route) => pathname.startsWith(route));
+  if (isAdminRoute) {
+    if (!user) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 });
+      }
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = '/login';
+      loginUrl.searchParams.set('next', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    const email = user.email?.toLowerCase() ?? '';
+    let isCoach = COACH_EMAILS.includes(email);
+    if (!isCoach) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      isCoach = profile?.role === 'coach';
+    }
+
+    if (!isCoach) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 });
+      }
+      const homeUrl = request.nextUrl.clone();
+      homeUrl.pathname = '/';
+      return NextResponse.redirect(homeUrl);
+    }
   }
 
   return supabaseResponse;

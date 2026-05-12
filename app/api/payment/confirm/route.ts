@@ -48,6 +48,30 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '주문 정보를 확인할 수 없습니다.' }, { status: 400 });
   }
 
+  // 친구 트랙은 friend/coach role만 결제 가능
+  if (programInfo.audience === 'friend') {
+    const adminCheck = createAdminClient();
+    const { data: userProfile } = await adminCheck
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    const role = userProfile?.role;
+    if (role !== 'friend' && role !== 'coach') {
+      return NextResponse.json(
+        { error: '친구 코칭 트랙에 접근할 권한이 없습니다. 초대 코드를 먼저 등록해 주세요.' },
+        { status: 403 }
+      );
+    }
+    // 친구 트랙은 항상 full 모드 + basic 옵션 + 체험권 차감 없음
+    if (mode !== 'full' || optionId !== 'basic') {
+      return NextResponse.json(
+        { error: '친구 코칭 트랙은 단일 옵션으로만 결제 가능합니다.' },
+        { status: 400 }
+      );
+    }
+  }
+
   // 3. 서버측 기대 금액 계산 + 체험권 잔액 확인
   const adminClient = createAdminClient();
 

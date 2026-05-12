@@ -107,7 +107,35 @@ export const PROGRAMS: Record<string, ProgramInfo> = {
       { week: 3, title: 'Sprint: Team Building', description: '초기 멤버 채용 원칙 수립 및 핵심 가치 내재화.' },
       { week: 4, title: 'Retrospective', description: '투자자를 설득하는 스토리텔링 및 IR 덱 코칭.' }
     ]
-  }
+  },
+  'FRIEND_COACHING': {
+    id: 'friend-coaching',
+    title: '1:1 정용훈 코칭',
+    target: '지인·추천 대상 1:1 단발 세션',
+    description: '편안한 자리에서 강점·진로·관계 등 원하는 주제를 함께 풀어가는 1:1 세션입니다.',
+    longDescription: '코치의 지인·추천 회원을 위한 단발 코칭 세션입니다. 비즈니스 코칭, 라이프 코칭, 관계 코칭 등 원하는 주제를 사전에 코치와 협의하여 진행합니다. 갤럽 강점 진단 등 추가 도구는 코치와 별도로 상의해 주세요.',
+    duration: '1회 / 60분',
+    price: '50,000원',
+    priceValue: 50000,
+    pricePerSession: 50000,
+    sessionsPerPackage: 1,
+    audience: 'friend',
+    diagnosisAllowed: false,
+    features: [
+      '비즈니스·라이프·관계 등 자유 주제',
+      '코치와 사전 협의로 주제 설정',
+      '온라인(영상통화) 또는 대면 가능',
+      '단발 세션 — 진단 옵션 없음',
+    ],
+    recommendedFor: [
+      '편안하게 코치를 만나보고 싶은 분',
+      '특정 주제 하나만 빠르게 정리하고 싶은 분',
+      '정규 트랙 진입 전 코칭을 경험해 보고 싶은 분',
+    ],
+    curriculum: [
+      { week: 1, title: '1:1 코칭 세션', description: '코치와 사전 협의된 주제로 60분간 진행됩니다. 코칭 후 간단한 정리 메모를 공유드립니다.' },
+    ],
+  },
 };
 
 export const DIAGNOSIS_OPTIONS: DiagnosisOption[] = [

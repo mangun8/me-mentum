@@ -27,11 +27,14 @@ export interface ProgramInfo {
   longDescription: string;
   duration: string;
   price: string;
-  priceValue: number; // 4회 기본 패키지 가격
+  priceValue: number; // 패키지 가격 (정규 4회 / 친구 트랙 1회)
   pricePerSession: number; // 회당 단가 (Founder는 0)
   features: string[];
   curriculum: CurriculumItem[];
   recommendedFor: string[];
+  audience?: 'public' | 'friend'; // 기본 'public', 'friend'는 코치 지인 한정 노출
+  sessionsPerPackage?: number; // 기본 4, 친구 트랙은 1
+  diagnosisAllowed?: boolean; // 기본 true, 친구 트랙은 false
 }
 
 export interface DiagnosisOption {
