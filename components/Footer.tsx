@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
 
         {/* 사업자정보 */}
         <div className="border-t border-gray-800 pt-6 mb-6 text-xs text-gray-500 leading-relaxed space-y-1">
-          <p>상호명: 미멘텀 | 대표자: 정용훈 | 사업자등록번호: 749-23-029900</p>
+          <p>상호명: 미멘텀 | 대표자: 정용훈 | 사업자등록번호: 749-23-02290</p>
           <p>주소: 서울특별시 마포구 월드컵북로 235, 25동 1303호(성산동, 성산시영아파트)</p>
           <p>이메일: admin@mementum.me</p>
         </div>
