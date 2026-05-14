@@ -32,6 +32,8 @@ export default function RedeemPage() {
             CODE_ALREADY_USED: '이미 사용된 코드입니다.',
             CODE_EXPIRED: '만료된 코드입니다.',
             UNAUTHORIZED: '로그인이 필요합니다.',
+            USER_INIT_FAILED: '계정 정보 초기화에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+            CLAIM_FAILED: '코드 등록 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
           }[data.error as string] ?? '코드 등록에 실패했습니다.'
         );
         return;

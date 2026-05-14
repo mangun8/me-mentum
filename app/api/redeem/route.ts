@@ -20,6 +20,28 @@ export async function POST(request: NextRequest) {
   }
 
   const admin = createAdminClient();
+
+  // 0) public.users 행 보장 — 결제 전 신규 계정은 행이 없음.
+  //    invite_codes.used_by가 public.users(id)를 FK 참조하므로 먼저 생성 필요.
+  const { data: existingUser } = await admin
+    .from('users')
+    .select('id, role')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (!existingUser) {
+    const { error: insertError } = await admin.from('users').insert({
+      id: user.id,
+      email: user.email!,
+      full_name: user.user_metadata?.full_name ?? null,
+      phone_number: '',
+    });
+    if (insertError) {
+      console.error('Redeem: user row create failed:', insertError);
+      return NextResponse.json({ error: 'USER_INIT_FAILED' }, { status: 500 });
+    }
+  }
+
   const { data: invite, error: fetchError } = await admin
     .from('invite_codes')
     .select('code, target_role, used_by, used_at, expires_at')
@@ -46,20 +68,19 @@ export async function POST(request: NextRequest) {
     .eq('code', code)
     .is('used_by', null)
     .select()
-    .single();
+    .maybeSingle();
 
-  if (claimError || !claimed) {
+  if (claimError) {
+    console.error('Redeem: invite claim failed:', claimError);
+    return NextResponse.json({ error: 'CLAIM_FAILED' }, { status: 500 });
+  }
+  if (!claimed) {
+    // used_by가 null인 행이 없음 = 그 사이 다른 요청이 선점
     return NextResponse.json({ error: 'CODE_ALREADY_USED' }, { status: 409 });
   }
 
   // 2) users.role 업그레이드 (coach는 downgrade하지 않음)
-  const { data: currentUser } = await admin
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (currentUser?.role !== 'coach') {
+  if (existingUser?.role !== 'coach') {
     await admin
       .from('users')
       .update({ role: invite.target_role })
