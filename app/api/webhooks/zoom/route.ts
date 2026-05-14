@@ -47,40 +47,53 @@ export async function POST(request: NextRequest) {
 
       const supabase = createAdminClient();
 
-      // meetingId로 booking 찾기 (zoom_meeting_id 매칭)
-      // 또는 시간 기반 매칭
-      const { data: booking } = await supabase
+      // 1순위: zoom_meeting_id 정확 매칭
+      const { data: byMeetingId } = await supabase
         .from('bookings')
-        .select('id, user_id')
+        .select('id, user_id, summary_status')
         .eq('zoom_meeting_id', meetingId)
-        .single();
+        .maybeSingle();
 
-      // zoom_meeting_id가 없으면 시간 기반으로 가장 가까운 booking 매칭
-      let bookingId = booking?.id;
-      let userId = booking?.user_id;
+      let matched = byMeetingId;
 
-      if (!bookingId) {
+      // 2순위: zoom_meeting_id 매칭 실패 시에만 시간 기반 fallback.
+      // 단, 아직 미처리(summary_status='none')이고 zoom_meeting_id가
+      // 비어있는 booking만 대상 → 이미 처리된 세션을 재매칭하지 않음
+      // (연속 코칭 시 이전 세션 booking을 덮어쓰는 문제 방지)
+      if (!matched) {
         const meetingStartTime = payload.object.start_time;
         const { data: nearestBooking } = await supabase
           .from('bookings')
-          .select('id, user_id')
+          .select('id, user_id, summary_status')
           .eq('status', 'confirmed')
+          .is('zoom_meeting_id', null)
+          .eq('summary_status', 'none')
           .gte('scheduled_at', new Date(new Date(meetingStartTime).getTime() - 60 * 60 * 1000).toISOString())
           .lte('scheduled_at', new Date(new Date(meetingStartTime).getTime() + 60 * 60 * 1000).toISOString())
           .order('scheduled_at', { ascending: true })
           .limit(1)
-          .single();
+          .maybeSingle();
 
-        if (nearestBooking) {
-          bookingId = nearestBooking.id;
-          userId = nearestBooking.user_id;
-        }
+        matched = nearestBooking;
       }
 
-      if (!bookingId) {
-        console.warn('[Zoom Webhook] 매칭되는 booking 없음');
+      if (!matched) {
+        console.warn(`[Zoom Webhook] 매칭되는 booking 없음: meetingId=${meetingId}`);
         return NextResponse.json({ success: true });
       }
+
+      // 멱등성: 이미 처리 중이거나 완료된 booking이면 스킵
+      // (Zoom은 응답 지연·실패 시 동일 웹훅을 재발송함)
+      const inFlightStatuses = ['processing', 'transcribing', 'summarizing', 'completed'];
+      if (inFlightStatuses.includes(matched.summary_status)) {
+        console.log(
+          `[Zoom Webhook] 이미 처리됨(${matched.summary_status}), 스킵: bookingId=${matched.id}`
+        );
+        return NextResponse.json({ success: true });
+      }
+
+      const bookingId = matched.id;
+      const userId = matched.user_id;
 
       // summary_status 업데이트
       await supabase
