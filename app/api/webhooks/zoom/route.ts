@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { waitUntil } from '@vercel/functions';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { processSessionRecording } from '@/lib/session-processor';
 
 const ZOOM_WEBHOOK_SECRET_TOKEN = process.env.ZOOM_WEBHOOK_SECRET_TOKEN!;
+
+// 후처리(오디오 다운로드 → Whisper → Gemini → Docs)가 응답 이후에도
+// 이어지도록 함수 실행 시간을 최대로 확보 (Vercel Pro: 최대 300초, Hobby: 60초로 clamp)
+export const maxDuration = 300;
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,17 +106,21 @@ export async function POST(request: NextRequest) {
         .update({ zoom_meeting_id: meetingId, summary_status: 'processing', updated_at: new Date().toISOString() })
         .eq('id', bookingId);
 
-      // 백그라운드에서 후처리 시작 (응답은 즉시 반환)
+      // 후처리는 응답 이후에도 이어져야 하므로 waitUntil로 등록.
+      // (Vercel 서버리스는 응답 반환 후 실행 컨텍스트를 종료할 수 있어
+      //  await 없이 호출하면 후처리가 중간에 끊길 수 있음)
       const downloadUrl = `${audioFile.download_url}?access_token=${payload.download_token}`;
 
-      processSessionRecording({
-        bookingId,
-        userId,
-        downloadUrl,
-        meetingId,
-      }).catch((err) => {
-        console.error('[Zoom Webhook] 후처리 실패:', err);
-      });
+      waitUntil(
+        processSessionRecording({
+          bookingId,
+          userId,
+          downloadUrl,
+          meetingId,
+        }).catch((err) => {
+          console.error('[Zoom Webhook] 후처리 실패:', err);
+        })
+      );
 
       return NextResponse.json({ success: true });
     }
