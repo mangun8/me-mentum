@@ -19,7 +19,7 @@ interface ProcessingParams {
 }
 
 export async function processSessionRecording(params: ProcessingParams) {
-  const { bookingId, downloadUrl, meetingId } = params;
+  const { bookingId, userId, downloadUrl, meetingId } = params;
   const supabase = createAdminClient();
 
   try {
@@ -58,7 +58,19 @@ export async function processSessionRecording(params: ProcessingParams) {
 
     // 4. Google Docs에 요약 문서 생성
     console.log(`[Session Processor] Google Docs 생성: ${meetingId}`);
-    const docUrl = await createGoogleDoc(meetingId, transcription, summary);
+
+    // 해당 세션 고객 이메일 조회 — 문서를 그 고객에게만 공유하기 위함
+    let userEmail: string | null = null;
+    if (userId) {
+      const { data: u } = await supabase
+        .from('users')
+        .select('email')
+        .eq('id', userId)
+        .maybeSingle();
+      userEmail = u?.email ?? null;
+    }
+
+    const docUrl = await createGoogleDoc(meetingId, transcription, summary, userEmail);
 
     // 5. 결과 저장
     await supabase
@@ -123,7 +135,8 @@ ${transcript}`;
 async function createGoogleDoc(
   meetingId: string,
   transcript: string,
-  summary: string
+  summary: string,
+  userEmail: string | null
 ): Promise<string> {
   // Google Service Account 인증
   const auth = new google.auth.GoogleAuth({
@@ -167,7 +180,7 @@ async function createGoogleDoc(
     },
   });
 
-  // 3. 공유 설정 — 링크가 있는 사람 누구나 읽기 가능
+  // 3. Drive 폴더로 이동 (운영자 접근용)
   if (process.env.GOOGLE_DRIVE_FOLDER_ID) {
     await drive.files.update({
       fileId: documentId,
@@ -176,13 +189,20 @@ async function createGoogleDoc(
     });
   }
 
-  await drive.permissions.create({
-    fileId: documentId,
-    requestBody: {
-      role: 'reader',
-      type: 'anyone',
-    },
-  });
+  // 4. 공유 설정 — 'anyone with link' 대신 해당 세션 고객에게만 reader 권한 부여.
+  //    코칭 대화 전문이 담기므로 링크 유출 시 노출을 막는다.
+  //    userEmail이 없으면(예: 시간매칭으로 잡힌 booking) 폴더 권한만 상속 → 운영자만 접근.
+  if (userEmail) {
+    await drive.permissions.create({
+      fileId: documentId,
+      requestBody: {
+        role: 'reader',
+        type: 'user',
+        emailAddress: userEmail,
+      },
+      sendNotificationEmail: false,
+    });
+  }
 
   return `https://docs.google.com/document/d/${documentId}`;
 }

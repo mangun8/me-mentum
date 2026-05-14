@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import crypto from 'crypto';
 import { createAdminClient } from '@/utils/supabase/admin';
 
 // Cal.com 웹훅 시크릿으로 검증
@@ -6,16 +7,32 @@ const WEBHOOK_SECRET = process.env.CAL_WEBHOOK_SECRET;
 
 export async function POST(request: NextRequest) {
   try {
-    // 웹훅 시크릿 검증
+    // 서명 검증을 위해 raw body를 먼저 읽음 (request.json()은 스트림을 소비함)
+    const rawBody = await request.text();
+
+    // Cal.com 웹훅 HMAC-SHA256 서명 검증 (x-cal-signature-256)
     if (WEBHOOK_SECRET) {
-      const authHeader = request.headers.get('x-cal-signature-256');
-      // Cal.com은 HMAC-SHA256 서명을 보냄 — 시크릿 설정 시 검증
-      if (!authHeader) {
-        console.warn('[Cal Webhook] 서명 없음, 시크릿이 설정되어 있지만 서명 헤더 누락');
+      const signature = request.headers.get('x-cal-signature-256');
+      if (!signature) {
+        console.warn('[Cal Webhook] 서명 헤더 누락 — 요청 거부');
+        return NextResponse.json({ error: 'Missing signature' }, { status: 401 });
+      }
+      const expected = crypto
+        .createHmac('sha256', WEBHOOK_SECRET)
+        .update(rawBody)
+        .digest('hex');
+      const sigBuf = Buffer.from(signature);
+      const expBuf = Buffer.from(expected);
+      if (
+        sigBuf.length !== expBuf.length ||
+        !crypto.timingSafeEqual(sigBuf, expBuf)
+      ) {
+        console.warn('[Cal Webhook] 서명 불일치 — 요청 거부');
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }
     }
 
-    const payload = await request.json();
+    const payload = JSON.parse(rawBody);
     const { triggerEvent, payload: data } = payload;
 
     console.log(`[Cal Webhook] 이벤트: ${triggerEvent}`);
